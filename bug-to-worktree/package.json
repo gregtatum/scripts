@@ -1,0 +1,21 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bug-to-worktree.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cli-color": "1.1.0",
+    "js-string-escape": "1.0.1",
+    "left-pad": "^1.0.2",
+    "node-fetch": "^1.5.1",
+    "slug": "0.9.1"
+  },
+  "dependencies": {
+    "co": "^4.6.0"
+  }
+}

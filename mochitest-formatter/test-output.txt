@@ -1,0 +1,74 @@
+Elapsed: 1.66s; From _tests: Kept 24571 existing; Added/updated 0; Removed 0 files and 0 directories.
+
+######
+### Now running mochitest-chrome.
+######
+
+Checking for orphan ssltunnel processes...
+Checking for orphan xpcshell processes...
+SUITE-START | Running 1 tests
+dir: devtools/client/memory/test/chrome
+pk12util: PKCS12 IMPORT SUCCESSFUL
+MochitestServer : launching [u'/Users/gregorytatum/dev/gecko-dev/objdir.noindex/dist/bin/xpcshell', '-g', u'/Users/gregorytatum/dev/gecko-dev/objdir.noindex/dist/Nightly.app/Contents/Resources', '-v', '170', '-f', u'/Users/gregorytatum/dev/gecko-dev/objdir.noindex/dist/bin/components/httpd.js', '-e', "const _PROFILE_PATH = '/var/folders/y7/0gx4dtxs223gpzqt_6rqjrmm0000gn/T/tmpml0uqp.mozrunner'; const _SERVER_PORT = '8888'; const _SERVER_ADDR = '127.0.0.1'; const _TEST_PREFIX = undefined; const _DISPLAY_RESULTS = false;", '-f', '/Users/gregorytatum/dev/gecko-dev/objdir.noindex/_tests/testing/mochitest/server.js']
+runtests.py | Server pid: 58757
+runtests.py | Websocket server pid: 58758
+runtests.py | SSL tunnel pid: 58759
+runtests.py | Running tests: start.
+
+runtests.py | Application pid: 58763
+TEST-INFO | started process Main app process
+JavaScript warning: resource://gre/modules/AddonManager.jsm, line 692: Proxy.create and Proxy.createFunction are deprecated, use new Proxy instead
+0 INFO SimpleTest START
+1 INFO TEST-START | devtools/client/memory/test/chrome/test_SnapshotListItem_01.html
+MEMORY-TEST: Rendered = <li class="snapshot-list-item  selected" data-reactid=".0"><span class="snapshot-title " data-reactid=".0.0"><span data-reactid=".0.0.1">Processing…</span></span><span class="snapshot-info" data-reactid=".0.1"><span class="snapshot-totals" data-reactid=".0.1.0"><span class="total-bytes" data-reactid=".0.1.0.0">0 MB</span></span><a class="delete" data-reactid=".0.1.1">Delete</a><a class="save" data-reactid=".0.1.2">Save</a></span></li>
+2 INFO TEST-PASS | devtools/client/memory/test/chrome/test_SnapshotListItem_01.html | Should have delete button when there is a path
+MEMORY-TEST: Rendered = <li class="snapshot-list-item  selected" data-reactid=".0"><span class="snapshot-title " data-reactid=".0.0"><span data-reactid=".0.0.1">Processing…</span></span><span class="snapshot-info" data-reactid=".0.1"><span class="snapshot-totals" data-reactid=".0.1.0"><span class="total-bytes" data-reactid=".0.1.0.0">0 MB</span></span><a class="delete" data-reactid=".0.1.1">Delete</a><a class="save" data-reactid=".0.1.2">Save</a></span></li>
+3 INFO TEST-UNEXPECTED-FAIL | devtools/client/memory/test/chrome/test_SnapshotListItem_01.html | No delete button should be found if there is no path
+window.onload<@chrome://mochitests/content/chrome/devtools/client/memory/test/chrome/test_SnapshotListItem_01.html:41:13
+TaskImpl_run@resource://gre/modules/Task.jsm:319:40
+promise callback*TaskImpl_handleResultValue@resource://gre/modules/Task.jsm:395:7
+TaskImpl_run@resource://gre/modules/Task.jsm:327:13
+promise callback*TaskImpl_handleResultValue@resource://gre/modules/Task.jsm:395:7
+TaskImpl_run@resource://gre/modules/Task.jsm:327:13
+EventHandlerNonNull*@chrome://mochitests/content/chrome/devtools/client/memory/test/chrome/test_SnapshotListItem_01.html:19:26
+MEMORY STAT vsizeMaxContiguous not supported in this build configuration.
+MEMORY STAT | vsize 3464MB | residentFast 447MB | heapAllocated 173MB
+4 INFO TEST-OK | devtools/client/memory/test/chrome/test_SnapshotListItem_01.html | took 1201ms
+5 INFO TEST-START | Shutdown
+6 INFO Passed:  1
+7 INFO Failed:  1
+8 INFO Todo:    0
+9 INFO Slowest: 1201ms - chrome://mochitests/content/chrome/devtools/client/memory/test/chrome/test_SnapshotListItem_01.html
+10 INFO SimpleTest FINISHED
+11 INFO TEST-INFO | Ran 1 Loops
+12 INFO SimpleTest FINISHED
+JavaScript error: resource://gre/modules/PerformanceStats.jsm, line 211: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsIPerformanceStatsService.isMonitoringJank]
+###!!! [Parent][OnMaybeDequeueOne] Error: Channel closing: too late to send/recv, messages will be lost
+###!!! [Parent][OnMaybeDequeueOne] Error: Channel closing: too late to send/recv, messages will be lost
+-*- TCPPresentationServer.js: TCPPresentationServer - close
+###!!! [Parent][OnMaybeDequeueOne] Error: Channel closing: too late to send/recv, messages will be lost
+###!!! [Parent][OnMaybeDequeueOne] Error: Channel closing: too late to send/recv, messages will be lost
+###!!! [Parent][OnMaybeDequeueOne] Error: Channel closing: too late to send/recv, messages will be lost
+TEST-INFO | Main app process: exit 0
+runtests.py | Application ran for: 0:00:03.786128
+zombiecheck | Reading PID log: /var/folders/y7/0gx4dtxs223gpzqt_6rqjrmm0000gn/T/tmpd8B0Lipidlog
+Stopping web server
+Stopping web socket server
+Stopping ssltunnel
+WARNING | leakcheck | refcount logging is off, so leaks can't be detected!
+runtests.py | Running tests: end.
+0 INFO TEST-START | Shutdown
+1 INFO Passed:  1
+2 INFO Failed:  1
+3 INFO Todo:    0
+4 INFO SimpleTest FINISHED
+The following tests failed:
+13 INFO TEST-UNEXPECTED-FAIL | devtools/client/memory/test/chrome/test_SnapshotListItem_01.html | No delete button should be found if there is no path
+window.onload<@chrome://mochitests/content/chrome/devtools/client/memory/test/chrome/test_SnapshotListItem_01.html:41:13
+TaskImpl_run@resource://gre/modules/Task.jsm:319:40
+promise callback*TaskImpl_handleResultValue@resource://gre/modules/Task.jsm:395:7
+TaskImpl_run@resource://gre/modules/Task.jsm:327:13
+promise callback*TaskImpl_handleResultValue@resource://gre/modules/Task.jsm:395:7
+TaskImpl_run@resource://gre/modules/Task.jsm:327:13
+EventHandlerNonNull*@chrome://mochitests/content/chrome/devtools/client/memory/test/chrome/test_SnapshotListItem_01.html:19:26
+SUITE-END | took 4s

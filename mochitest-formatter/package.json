@@ -1,0 +1,15 @@
+{
+  "name": "mochi",
+  "main": "index.js",
+  "dependencies": {
+    "colornames": "^1.1.1",
+    "split": "^1.0.0",
+    "stream-combiner": "^0.2.2",
+    "through2": "^2.0.0",
+    "x256": "0.0.2"
+  },
+  "devDependencies": {
+    "colors": "1.1.2",
+    "through2": "2.0.1"
+  }
+}
