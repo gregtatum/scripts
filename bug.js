@@ -9,13 +9,31 @@ function exec(cmd, cb) {
   })
 }
 
+// Try git first.
 exec("git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'", function(branch) {
   var [,bugId] = branch.match(/\/(\d*)/) || []
+
   if(bugId) {
-    var cmd = `open 'https://bugzilla.mozilla.org/show_bug.cgi?id=${bugId}'`
-    console.log(cmd)
-    exec(cmd)
+    // Hey, we found the bug, let's go!
+    openBug(bugId)
   } else {
-    console.log('Could not find bug id in ' + branch)
+
+    // Try mercurial now.
+    exec("hg log -l 1", function(log) {
+      var [, bugId] = log.split('\n')[4].match(/Bug (\d+)/) || []
+      if (bugId) {
+        // Yup, the bug was found!
+        openBug(bugId)
+      } else {
+        console.log('Could not find bug number.')
+      }
+    })
+
   }
 })
+
+function openBug (bugId) {
+  var cmd = `open 'https://bugzilla.mozilla.org/show_bug.cgi?id=${bugId}'`
+  console.log(cmd)
+  exec(cmd)
+}
