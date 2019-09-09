@@ -19,8 +19,8 @@ exec("git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'", function
   } else {
 
     // Try mercurial now.
-    exec("hg log -l 1", function(log) {
-      var [, bugId] = log.split('\n')[4].match(/Bug (\d+)/) || []
+    exec("hg summary", function(log) {
+      var [, bugId] = log.split('\n')[1].match(/Bug (\d+)/) || []
       if (bugId) {
         // Yup, the bug was found!
         openBug(bugId)
@@ -33,7 +33,8 @@ exec("git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'", function
 })
 
 function openBug (bugId) {
-  var cmd = `open 'https://bugzilla.mozilla.org/show_bug.cgi?id=${bugId}'`
+  var postfix = process.argv.includes('--toReviewBoard') ? '#toReviewBoard' : ''
+  var cmd = `open 'https://bugzilla.mozilla.org/show_bug.cgi?id=${bugId}${postfix}'`
   console.log(cmd)
   exec(cmd)
 }
