@@ -1,0 +1,17 @@
+{
+  "name": "phab",
+  "version": "1.0.0",
+  "description": "",
+  "main": "phab.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cli-color": "^1.4.0"
+  },
+  "devDependencies": {
+    "flow-bin": "^0.107.0"
+  }
+}
