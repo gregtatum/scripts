@@ -5,3 +5,5 @@ git-cinnabar
 version-control-tools
 bz-file
 lein
+phabricator
+moz-phab
