@@ -23,8 +23,10 @@ user="${brownorange}\u${clear}"
 
 echo -n ${newlines}
 echo -n ${currpath}
-echo -n " ${darkgray}as${clear} ${user}"
+# echo -n " ${darkgray}as${clear} ${user}"
 echo -n "\$(git_branch)"
+# This is too slow:
+# echo -n "\$(hg_bug)"
 echo -n " ${darkgray}at${clear} \t"
 echo -n "\n"
 echo -n "${red}➤${clear} "
