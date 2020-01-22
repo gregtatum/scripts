@@ -120,10 +120,24 @@ function printRevisionList(revisions/* :Revision[] */) {
 }
 
 function printHeader (text/* :string */) {
-  console.log(color.cyan(`\n======= ${text} =====================================================`));
+  console.log(color.cyan(`\n======= Phabricator ${text} =====================================================`));
 }
 
 (async () => {
+  const [geckoDir, userId] = process.argv.slice(2);
+
+  if (!geckoDir) {
+    console.warn('This command requires the first argument to be the path the gecko directory where arcanist is configured.');
+    process.exit(1);
+  }
+  try {
+    process.chdir(geckoDir);
+  } catch (error) {
+    console.warn(`Unable to change the directory to your gecko repo from path "${geckoDir}"`);
+    console.error(error);
+    process.exit(1);
+  }
+
   const response/* :Response<Cursor<Revision>> */ =
     await callConduit('differential.revision.search', {
       queryKey: "active",
@@ -139,8 +153,6 @@ function printHeader (text/* :string */) {
     Number(a.fields['bugzilla.bug-id']) - Number(b.fields['bugzilla.bug-id'])
   );
 
-  const userId = process.argv[2];
-
   printHeader('Mine');
   printRevisionList(data.filter(revision => userId === revision.fields.authorPHID));
 
@@ -149,9 +161,12 @@ function printHeader (text/* :string */) {
     console.warn("\n\nPlease provide the phid of a user as the first argument to this script. See the data dumped above to find yours.")
   }
 
-  printHeader('Others');
-  printRevisionList(data.filter(revision => (
+  const others = data.filter(revision => (
     userId !== revision.fields.authorPHID
       && revision.fields.status.value === 'needs-review'
-  )));
+  ));
+  if (others.length > 0) {
+    printHeader('Others');
+    printRevisionList(others);
+  }
 })();

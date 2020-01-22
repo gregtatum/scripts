@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@octokit/rest": "^16.37.0",
     "cli-color": "^1.4.0"
   },
   "devDependencies": {
