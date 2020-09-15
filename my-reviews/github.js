@@ -160,7 +160,7 @@ type PR = {
   author_association: 'MEMBER'
 }
 
-type PullsResponse = {
+export type PullsResponse = {
   'status': any,
   'url': any,
   'headers': any,
@@ -188,10 +188,6 @@ type ReviewResponse = {|
   data: Review[]
 |}
 */
-
-const me = "gregtatum";
-const owner = "firefox-devtools";
-const repo = "profiler";
 
 async function run () {
   const [owner, repo, me] = process.argv.slice(2);
@@ -228,22 +224,21 @@ async function run () {
   }
 
   if (prsToHandle.length > 0) {
-    printHeader("To Review");
+    printHeader(owner, repo, "To Review");
     for (const pr of prsToHandle) {
-      await printPR(pr);
+      await printPR(owner, repo, pr);
     }
   }
 
   if (myPrs.length > 0) {
-    printHeader("My PRs");
+    printHeader(owner, repo, "My PRs");
     for (const pr of myPrs) {
-      await printPR(pr);
+      await printPR(owner, repo, pr);
     }
   }
 }
 
-async function printPR(pr/* :PR */) {
-
+async function printPR(owner, repo, pr/* :PR */) {
   console.log('')
   const gray = color.xterm(8);
   console.log(color.yellow(`PR #${pr.number}: `) +  color.whiteBright(pr.title))
@@ -263,8 +258,9 @@ async function printPR(pr/* :PR */) {
         state = color.green(state);
         break;
       case 'COMMENTED':
-        state = color.cyan(state);
-        // TODO
+        // state = color.cyan(state);
+        // Skip comments, they aren't really useful.
+        continue
       default:
     }
     console.log(gray('reviewer: ') + state + ' ' + review.user.login);
@@ -280,6 +276,6 @@ async function printPR(pr/* :PR */) {
 
 run().catch(error => console.error(error));
 
-function printHeader (text/* :string */) {
-  console.log(color.cyan(`\n======= GitHub ${text} =====================================================`));
+function printHeader (owner/* :string */, repo/* :string */, text/* :string */) {
+  console.log(color.cyan(`\n======= ${text} (${owner}/${repo}) =====================================================`));
 }

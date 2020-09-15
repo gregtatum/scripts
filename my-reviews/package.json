@@ -10,7 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "@octokit/rest": "^16.37.0",
-    "cli-color": "^1.4.0"
+    "cli-color": "^1.4.0",
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "flow-bin": "^0.107.0"
