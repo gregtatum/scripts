@@ -2,7 +2,7 @@
 /*::
 import type { PullsResponse } from './github';
 */
-const Octokit = require("@octokit/rest");
+const { Octokit } = require("@octokit/rest");
 const octokit = new Octokit();
 
 function UNSAFE_openUrl(unsafeUrlString) {

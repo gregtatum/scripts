@@ -1,5 +1,5 @@
 // @flow
-const Octokit = require("@octokit/rest");
+const { Octokit } = require("@octokit/rest");
 const octokit = new Octokit();
 const color = require('cli-color')
 
@@ -244,6 +244,7 @@ async function printPR(owner, repo, pr/* :PR */) {
   console.log(color.yellow(`PR #${pr.number}: `) +  color.whiteBright(pr.title))
   console.log(gray('     url: ') + color.blue.underline(pr.html_url))
   console.log(gray('  author: ') + pr.user.login);
+  console.log(gray('  branch: ') + pr.head.ref);
 
   const reviewResponse/* :ReviewResponse */ = await octokit.pulls.listReviews({
     owner,
