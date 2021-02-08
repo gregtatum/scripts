@@ -7,3 +7,4 @@ bz-file
 lein
 phabricator
 moz-phab
+bash-profile/.secrets
