@@ -111,10 +111,12 @@ function runTestWithDebugger() {
     '-o', `run`,
   ];
 
+  const cmd = 'rust-lldb'
+
   const config = { stdio: [process.stdin, process.stdout, process.stderr] };
   console.log("🚀 Launching lldb");
   console.log();
-  console.log('➤', ['lldb', ...lldbArgs].join(' '));
+  console.log('➤', [cmd, ...lldbArgs].join(' '));
   console.log();
-  spawn('lldb', lldbArgs, config);
+  spawn(cmd, lldbArgs, config);
 }
