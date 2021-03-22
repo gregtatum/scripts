@@ -128,6 +128,7 @@ type PR = {
   requested_teams: [],
   labels: [],
   milestone: null,
+  draft: boolean,
   commits_url: 'https://api.github.com/repos/firefox-devtools/profiler/pulls/2372/commits',
   review_comments_url: 'https://api.github.com/repos/firefox-devtools/profiler/pulls/2372/comments',
   review_comment_url: 'https://api.github.com/repos/firefox-devtools/profiler/pulls/comments{/number}',
@@ -212,7 +213,7 @@ async function run () {
   const prsToHandle = []
   const myPrs = []
   for (const pr of openPrs) {
-    if (pr.user.login === me) {
+    if (pr.user.login === me && !pr.draft) {
       myPrs.push(pr);
     }
     for (const reviewer of pr.requested_reviewers) {
