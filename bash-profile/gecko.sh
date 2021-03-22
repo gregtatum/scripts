@@ -26,6 +26,7 @@ alias mbr="mb && mr"
 alias mlint="mach lint -wo --fix"
 alias mboot="mach bootstrap --no-interactive --application-choice 'Firefox for Desktop'"
 alias mdb="mach build-backend -b CompileDB"
+alias msubmit="mach lint --warnings --outgoing && moz-phab submit"
 
 alias build-release="change_mozconfig release"
 alias build-art-release="change_mozconfig artifact-release"

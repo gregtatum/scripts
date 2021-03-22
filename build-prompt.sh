@@ -26,10 +26,10 @@ echo -n ${newlines}
 echo -n ${currpath}
 # echo -n " ${darkgray}as${clear} ${user}"
 echo -n "\$(git_branch)"
-if [ -d "./.hg" ]; then
-  # This is a bit slow:
-  echo -n "\$(hg_bookmark)"
-fi
+# if [ -d "./.hg" ]; then
+  # I accidentally deleted this.
+  # echo -n "\$(hg_bookmark)"
+# fi
 # echo -n "\$(hg_bug)"
 echo -n " ${darkgray}at${clear} \t"
 echo -n "\n"
