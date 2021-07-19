@@ -24,7 +24,7 @@ alias mtd="MOZ_QUIET=1 mach mochitest --jsdebugger"
 alias mbfr="mbf && mr"
 alias mbr="mb && mr"
 alias mlint="mach lint -wo --fix"
-alias mboot="mach bootstrap --no-interactive --application-choice 'Firefox for Desktop'"
+alias mboot="mach --no-interactive bootstrap --application-choice 'Firefox for Desktop'"
 alias mdb="mach build-backend -b CompileDB"
 alias msubmit="mach lint --warnings --outgoing && moz-phab submit"
 
@@ -133,7 +133,7 @@ mozup() {
   # Look to see if central is currently checked out.
   hg log -v -r . | grep -E "^fxtree:\s+central$" &> /dev/null
   if [ $? != 0 ]; then
-    hgs
+    hg status
     hg stack
     echo ""
     echo "Please check out central"
@@ -172,11 +172,6 @@ mozup() {
   fi
 
   echo ""
-  echo "➤ Running mach bootstrap"
-  echo ""
-  mboot
-
-  echo ""
   echo "➤ Running mach clobber"
   echo ""
   mach clobber
@@ -187,7 +182,6 @@ mozup() {
   if [ $? != 0 ]; then
     echo "There was an issue with mach clobber, quitting mozup"
   fi
-
 
   echo ""
   echo "➤ Running mach build"

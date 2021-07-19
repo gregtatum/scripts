@@ -3,12 +3,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 touch $DIR/.secrets
 source $DIR/.secrets
+source $DIR/git.sh
+source $DIR/hg.sh
 source $DIR/path.sh
 source $DIR/commands.sh
 source $DIR/environments.sh
 source $DIR/gecko.sh
-source $DIR/git.sh
-source $DIR/hg.sh
 
 # I should probably upgrade at some point.
 export BASH_SILENCE_DEPRECATION_WARNING=1

@@ -56,6 +56,33 @@ findinfiles() {
 	grep -rnwl . -e $1 --include=$2
 }
 
+alias _tree="TREE -L 2 -C -I 'node_modules|.git|.hg'"
+# Display a shallow tree of files. Pass an argument to match a specific file
+tree() {
+  if [ -z "$1" ] || [ ${1:0:1} == "-" ]; then
+    _tree
+  else
+    _tree --matchdirs --prune -P $1 ${@:2}
+  fi
+}
+alias _tree-size="_tree -s -h --du -i"
+tree-size() {
+  if [ -z "$1" ] || [ ${1:0:1} == "-" ]; then
+    _tree-size
+  else
+    _tree-size --matchdirs --prune -P $1 ${@:2}
+  fi
+}
+alias _files="_tree -s -h --du -i -f"
+files() {
+  if [ -z "$1" ] || [ ${1:0:1} == "-" ]; then
+    _files
+  else
+    _files --matchdirs --prune -P $1 ${@:2}
+  fi
+}
+
+
 #--------------------------------------------------------------------
 # Shortcuts
 me() {
