@@ -26,17 +26,22 @@ static void OutputUTF8(mozilla::Span<const char> data) {
 
 void PrettyPrint(mozilla::Span<const char> string, const char *msg = "",
                  const char *typeName = "mozilla::Span<const char>") {
-  std::cout << msg << typeName << " {\n  Length: " << string.Length()
-            << " bytes,\n  String: ";
-  OutputUTF8(string);
-  std::cout << ",\n  NullTerminated: ";
-  if (string.data()[string.Length() - 1] == '\0') {
-    std::cout << "inside of span";
-  } else if (static_cast<const char *>(string.data())[string.Length()] ==
-             '\0') {
-    std::cout << "outside of span";
+  std::cout << msg << typeName;
+  if (!string.data()) {
+    std::cout << " {\n  Length: " << string.Length()
+              << " bytes,\n  String: nullptr,\n}";
   } else {
-    std::cout << "no";
+    std::cout << " {\n  Length: " << string.Length() << " bytes,\n  String: ";
+    OutputUTF8(string);
+    std::cout << ",\n  NullTerminated: ";
+    if (string.data()[string.Length() - 1] == '\0') {
+      std::cout << "inside of span";
+    } else if (static_cast<const char *>(string.data())[string.Length()] ==
+               '\0') {
+      std::cout << "outside of span";
+    } else {
+      std::cout << "no";
+    }
   }
 
   std::cout << ",\n}\n";
