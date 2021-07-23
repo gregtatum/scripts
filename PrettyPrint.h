@@ -105,6 +105,9 @@ template <typename T> void PrettyPrint(T aValue, const char *msg = "") {
     std::cout << msg << "size_t(" << aValue << ")\n";
   } else if (std::is_same_v<T, unsigned long>) {
     std::cout << msg << "unsigned long(" << aValue << ")\n";
+  } else if (std::is_same_v<T, uint8_t>) {
+    std::cout << msg << "uint8_t(" << static_cast<unsigned int>(aValue)
+              << ")\n";
   } else {
     std::cout << msg << "PrettyPrintTODO(" << aValue << ")\n";
   }
