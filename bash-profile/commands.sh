@@ -1,7 +1,9 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
   alias ls="gls -ahlX --color --group-directories-first"
+  alias think="ssh -i $THINK_STATION_KEY $THINK_STATION_IP"
 else
   alias ls="ls -ahlX --color"
+  alias think="Already on the 🐧"
 fi
 
 alias ltst="ls -t | head -15"
