@@ -154,7 +154,16 @@ function printHeader (text/* :string */) {
   );
 
   printHeader('Mine');
-  printRevisionList(data.filter(revision => userId === revision.fields.authorPHID));
+  printRevisionList(data.filter(revision => {
+    const { title, authorPHID } = revision.fields
+    if (userId !== authorPHID) {
+      return false;
+    }
+    if (!title) {
+      return true;
+    }
+    return !title.match(/\bWIP\b/)
+  }));
 
   if (!userId) {
     console.warn(data)
