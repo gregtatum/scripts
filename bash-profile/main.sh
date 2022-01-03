@@ -33,5 +33,5 @@ bind '"\e[B":history-search-forward'
 if [[ "$OSTYPE" == "darwin"* ]]; then
   export PS1=$(build-prompt.sh)
 else
-  ./update-repo.sh
+  ~/scripts/update-repo.sh
 fi

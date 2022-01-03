@@ -55,7 +55,6 @@ gaaca() {
   gca $@
   gs
 }
-source ~/git-completion.bash
 grange() {
   echo "$(git merge-base main HEAD)..$(git rev-parse HEAD)"
 }
@@ -98,3 +97,7 @@ git_branch() {
 		echo -e "${darkgray} on${clear} ${green}${repo}${clear}/${lightgreen}${branch}${clear}"
 	fi
 }
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  source ~/git-completion.bash
+fi
