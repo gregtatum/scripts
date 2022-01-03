@@ -1,7 +1,7 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
   alias ls="gls -ahlX --color --group-directories-first"
 else
-  alias ls="ls -ahlX"
+  alias ls="ls -ahlX --color"
 fi
 
 alias ltst="ls -t | head -15"

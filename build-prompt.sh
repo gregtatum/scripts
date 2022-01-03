@@ -23,6 +23,7 @@ user="${brownorange}\u${clear}"
 
 
 echo -n ${newlines}
+
 echo -n ${currpath}
 # echo -n " ${darkgray}as${clear} ${user}"
 echo -n "\$(git_branch)"
@@ -32,5 +33,11 @@ echo -n "\$(git_branch)"
 # fi
 # echo -n "\$(hg_bug)"
 echo -n " ${darkgray}at${clear} \t"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo -n " 🍏"
+else
+  echo -n " 🐧"
+fi
+
 echo -n "\n"
 echo -n "${red}➤${clear} "

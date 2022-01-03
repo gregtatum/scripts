@@ -1,6 +1,10 @@
 # https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+if [[ "$OSTYPE" != "darwin"* ]]; then
+  ~/scripts/bash-profile/update-repo.sh
+fi
+
 touch $DIR/.secrets
 source $DIR/.secrets
 source $DIR/git.sh
@@ -30,8 +34,4 @@ shopt -s cmdhist
 bind '"\e[A":history-search-backward'
 bind '"\e[B":history-search-forward'
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  export PS1=$(build-prompt.sh)
-else
-  ~/scripts/bash-profile/update-repo.sh
-fi
+export PS1=$(build-prompt.sh)
