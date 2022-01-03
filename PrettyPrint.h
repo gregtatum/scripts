@@ -1,5 +1,5 @@
-#ifndef PrettyPrint_h_
-#define PrettyPrint_h_
+#ifndef greg_PrettyPrint_h_
+#define greg_PrettyPrint_h_
 
 #include "mozilla/Span.h"
 #include "mozilla/Utf8.h"
@@ -24,12 +24,15 @@ static void OutputUTF8(mozilla::Span<const char> data) {
   std::cout << "\"";
 }
 
-void PrettyPrint(mozilla::Span<const char> string, const char *msg = "",
-                 const char *typeName = "mozilla::Span<const char>") {
-  std::cout << msg << typeName;
+static void PrettyPrint(mozilla::Span<const char> string, const char *msg = "",
+                        const char *typeName = "mozilla::Span<const char>") {
+  std::cout << msg << " " << typeName;
   if (!string.data()) {
     std::cout << " {\n  Length: " << string.Length()
               << " bytes,\n  String: nullptr,\n}";
+  } else if (string.empty()) {
+    std::cout << " {\n  Length: " << string.Length()
+              << " bytes,\n  String: \"\",\n}";
   } else {
     std::cout << " {\n  Length: " << string.Length() << " bytes,\n  String: ";
     OutputUTF8(string);
@@ -47,8 +50,8 @@ void PrettyPrint(mozilla::Span<const char> string, const char *msg = "",
   std::cout << ",\n}\n";
 }
 
-void PrettyPrint(std::basic_string_view<const char> string,
-                 const char *msg = "") {
+[[maybe_unused]] static void
+PrettyPrint(std::basic_string_view<const char> string, const char *msg = "") {
   PrettyPrint(mozilla::Span(string), msg, "std::string_view");
 }
 
@@ -62,14 +65,20 @@ static std::string ToUtf8(mozilla::Span<const char16_t> input) {
   return result;
 }
 
-void PrettyPrint(mozilla::Span<const char16_t> string, const char *msg = "",
-                 const char *typeName = "mozilla::Span<const char16_t>") {
+static void
+PrettyPrint(mozilla::Span<const char16_t> string, const char *msg = "",
+            const char *typeName = "mozilla::Span<const char16_t>") {
   std::cout << msg << typeName << " {\n  Length: " << string.Length()
             << " characters,\n  String: ";
 
   OutputUTF8(ToUtf8(string));
   std::cout << ",\n  NullTerminated: ";
-  if (string.data()[string.Length() - 1] == '\0') {
+  if (!string.data()) {
+    std::cout << " {\n  Length: " << string.Length()
+              << " bytes,\n  String: nullptr,\n}";
+  } else if (string.Length() == 0) {
+    std::cout << " {\n  Length: 0 bytes,\n  String: validptr,\n}";
+  } else if (string.data()[string.Length() - 1] == '\0') {
     std::cout << "inside of span";
   } else if (
       // Check for the value 0x0000
@@ -85,35 +94,38 @@ void PrettyPrint(mozilla::Span<const char16_t> string, const char *msg = "",
   std::cout << ",\n}\n";
 }
 
-void PrettyPrint(
-    std::basic_string_view<const char16_t> string, const char *msg = "",
-    const char *typeName = "std::basic_string_view<const char16_t>") {
+static void
+PrettyPrint(std::basic_string_view<const char16_t> string, const char *msg = "",
+            const char *typeName = "std::basic_string_view<const char16_t>") {
   PrettyPrint(mozilla::Span(string), msg, typeName);
 }
 
-void PrettyPrint(const char16_t *aValue, const char *msg = "") {
+[[maybe_unused]] static void PrettyPrint(const char16_t *aValue,
+                                         const char *msg = "") {
   PrettyPrint(aValue, msg, "const char16_t *");
 }
 
-/**
- * Avoid implicit conversions by doing a template.
- */
-template <typename T> void PrettyPrint(T aValue, const char *msg = "") {
-  if constexpr (std::is_same_v<T, bool>) {
-    std::cout << msg << "Boolean(" << (aValue ? "true" : "false") << ")\n";
-  } else if (std::is_same_v<T, size_t>) {
-    std::cout << msg << "size_t(" << aValue << ")\n";
-  } else if (std::is_same_v<T, unsigned long>) {
-    std::cout << msg << "unsigned long(" << aValue << ")\n";
-  } else if (std::is_same_v<T, uint8_t>) {
-    std::cout << msg << "uint8_t(" << static_cast<unsigned int>(aValue)
-              << ")\n";
-  } else {
-    std::cout << msg << "PrettyPrintTODO(" << aValue << ")\n";
-  }
-}
+// /**
+//  * Avoid implicit conversions by doing a template.
+//  */
+// template <typename T> void PrettyPrint(T aValue, const char *msg = "") {
+//   if constexpr (std::is_same_v<T, bool>) {
+//     std::cout << msg << "Boolean(" << (aValue ? "true" : "false") << ")\n";
+//   } else if (std::is_same_v<T, size_t>) {
+//     std::cout << msg << "size_t(" << aValue << ")\n";
+//   } else if (std::is_same_v<T, unsigned long>) {
+//     std::cout << msg << "unsigned long(" << aValue << ")\n";
+//   } else if (std::is_same_v<T, uint8_t>) {
+//     std::cout << msg << "uint8_t(" << static_cast<unsigned int>(aValue)
+//               << ")\n";
+//   } else if (std::is_same_v<T, int32_t>) {
+//     std::cout << msg << "int32_t(" << aValue << ")\n";
+//   } else {
+//     std::cout << msg << "PrettyPrintTODO(" << aValue << ")\n";
+//   }
+// }
 
-void PrettyPrintBinary(int x) {
+[[maybe_unused]] static void PrettyPrintBinary(int x) {
   auto *string = new char[9];
   string[0] = '\0';
 
@@ -125,7 +137,7 @@ void PrettyPrintBinary(int x) {
   std::cout << string;
 }
 
-void PrettyPrintBinary(uint32_t x) {
+[[maybe_unused]] static void PrettyPrintBinary(uint32_t x) {
   auto *string = new char[33];
   string[0] = '\0';
 
