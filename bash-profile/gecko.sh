@@ -9,7 +9,13 @@ revs() {
 }
 
 export MACH_NOTIFY_MINTIME=0 # Make mach notify every time
-alias mach="caffeinate -i ./mach" # caffeinate will keep longer builds alive.
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias mach="caffeinate -i ./mach" # caffeinate will keep longer builds alive.
+else
+  # ignore caffeinate for the desktop machine.
+  alias mach="./mach"
+fi
 alias mb="mach build"
 alias mbb="mach build binaries"
 alias mbf="mach build faster"
