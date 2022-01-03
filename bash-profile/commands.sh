@@ -1,4 +1,9 @@
-alias ls="gls -ahlX --color --group-directories-first"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias ls="gls -ahlX --color --group-directories-first"
+else
+  alias ls="ls -ahlX"
+fi
+
 alias ltst="ls -t | head -15"
 alias clear="echo -ne '\033]50;ClearScrollback\a'"
 alias showhidden="bash ~/hidden-show.sh"
@@ -17,12 +22,12 @@ alias brew-upgrade="brew update && brew upgrade"
 alias kill-flow="pkill -f flow-bin"
 alias kill-audio="sudo killall coreaudiod"
 alias pngquant="pngquant --ext .tiny.png"
-alias serve="echo 'http://localhost:8000'; python3 -m http.server"
+alias ccat="~/Library/Python/3.7/bin/pygmentize -O style=monokai -f console256 -g"
+alias serve="http-server"
 alias pserve="php -S localhost:8000 router.php"
 alias edit-hosts="code /private/etc/hosts"
 alias edit-profile="code ~/scripts/bash-profile"
 alias edit-cron="env EDITOR=vim crontab -e"
-alias ccat="/Users/greg/Library/Python/3.7/bin/pygmentize -O style=monokai -f console256 -g"
 alias nr="npm run"
 alias jest="clear && jest"
 alias ytdl="youtube-dl -f mp4"
@@ -33,6 +38,10 @@ alias find="find . \
   -not -path '*/.hg/*' \
   -not -path '*/node_modules/*' \
   -not -path '*/target/*' \
+  -not -path '*/obj-ff-artifact/*' \
+  -not -path '*/obj-ff-debug/*' \
+  -not -path '*/obj-ff-release/*' \
+  -not -path '*/thidparty/*' \
   -iname"
 loop() {
   while clear && $@; do :; done
@@ -56,11 +65,11 @@ findinfiles() {
 	grep -rnwl . -e $1 --include=$2
 }
 
-alias _tree="TREE -L 2 -C -I 'node_modules|.git|.hg'"
+alias _tree="TREE -L 2 -C -I 'node_modules|.git|.hg|target'"
 # Display a shallow tree of files. Pass an argument to match a specific file
 tree() {
   if [ -z "$1" ] || [ ${1:0:1} == "-" ]; then
-    _tree
+    _tree $@
   else
     _tree --matchdirs --prune -P $1 ${@:2}
   fi
@@ -68,7 +77,7 @@ tree() {
 alias _tree-size="_tree -s -h --du -i"
 tree-size() {
   if [ -z "$1" ] || [ ${1:0:1} == "-" ]; then
-    _tree-size
+    _tree-size $@
   else
     _tree-size --matchdirs --prune -P $1 ${@:2}
   fi
@@ -76,7 +85,7 @@ tree-size() {
 alias _files="_tree -s -h --du -i -f"
 files() {
   if [ -z "$1" ] || [ ${1:0:1} == "-" ]; then
-    _files
+    _files $@
   else
     _files --matchdirs --prune -P $1 ${@:2}
   fi
@@ -96,7 +105,7 @@ _me() {
   local cur
   if [ $COMP_CWORD -eq 1 ] ; then
     cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(compgen -f /Users/greg/me/$cur | cut -d"/" -f5 ) )
+    COMPREPLY=( $(compgen -f ~/me/$cur | cut -d"/" -f5 ) )
   fi
 }
 complete -o filenames -F _me me
@@ -108,7 +117,7 @@ _lem() {
   local cur
   if [ $COMP_CWORD -eq 1 ] ; then
     cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(compgen -f /Users/greg/lem/$cur | cut -d"/" -f5 ) )
+    COMPREPLY=( $(compgen -f ~/lem/$cur | cut -d"/" -f5 ) )
   fi
 }
 complete -o filenames -F _lem lem
@@ -120,7 +129,7 @@ _dev() {
   local cur
   if [ $COMP_CWORD -eq 1 ] ; then
     cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(compgen -f /Users/greg/dev/$cur | cut -d"/" -f5 ) )
+    COMPREPLY=( $(compgen -f ~/dev/$cur | cut -d"/" -f5 ) )
   fi
 }
 complete -o filenames -F _dev dev

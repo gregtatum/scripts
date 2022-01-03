@@ -1,6 +1,6 @@
 revs() {
   # List all current things in my review queue
-  node ~/scripts/my-reviews/phab '/Users/greg/dev/gecko' 'PHID-USER-hch2p624jejt4kddoqow'
+  node ~/scripts/my-reviews/phab '~/dev/gecko' 'PHID-USER-hch2p624jejt4kddoqow'
   node ~/scripts/my-reviews/github 'unicode-org' 'icu4x' 'gregtatum'
   node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler' 'gregtatum'
   node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler-server' 'gregtatum'
@@ -27,15 +27,45 @@ alias mlint="mach lint -wo --fix"
 alias mboot="mach --no-interactive bootstrap --application-choice 'Firefox for Desktop'"
 alias mdb="mach build-backend -b CompileDB"
 alias msubmit="mach lint --warnings --outgoing && moz-phab submit"
-
+alias mide="mach ide vscode"
 alias build-release="change_mozconfig release"
 alias build-art-release="change_mozconfig artifact-release"
 alias build-art-debug="change_mozconfig artifact-debug"
 alias build-debug="change_mozconfig debug"
 alias build-android="change_mozconfig android"
 change_mozconfig() {
-  ln -sf /Users/greg/dev/gecko/mozconfig-$1 /Users/greg/dev/gecko/mozconfig
+  ln -sf ~/dev/gecko/mozconfig-$1 ~/dev/gecko/mozconfig
   echo "Changed the mozconfig to $1"
+}
+
+mpull() {
+  if [[ $(git diff --stat) != '' ]]; then
+      echo "Current branch is dirty..."
+      echo
+      git status
+      echo
+      echo "Please resolve these changes before continuing..."
+  else
+    git cinnabar fsck
+    git fetch --tags hg::tags: tag "*"
+    git fetch --all
+    git checkout origin/bookmarks/central
+  fi
+}
+
+mreup() {
+  if [[ $(git diff --stat) != '' ]]; then
+      echo "Current branch is dirty..."
+      echo
+      git status
+      echo
+      echo "Please resolve these changes before continuing..."
+  else
+    git cinnabar fsck
+    git fetch --tags hg::tags: tag "*"
+    git fetch --all
+    git rebase origin/bookmarks/central
+  fi
 }
 
 mtx() {
@@ -63,17 +93,16 @@ mtfd() {
 }
 mtfh() {
   clear
-  mach mochitest "$@" | node /Users/greg/scripts/mochitest-formatter/index.js
+  mach mochitest "$@" | node ~/scripts/mochitest-formatter/index.js
 }
 mr() {
-  # Automatically hook up the live reload
-  # LIVE_RELOAD="/Users/greg/firefox-profile/dev/extensions/devtools@mozilla.org"
-  # rm $LIVE_RELOAD
-  # ln -s "$(pwd)/devtools" $LIVE_RELOAD
-  # echo "Symlinked devtools to profile at $LIVE_RELOAD"
+  if [ "$(pwd)" == "~/dev/spidermonkey" ]; then
+    mach run
+    return
+  fi
 
   if [ "$1" == "divs" ]; then
-    url='file:///Users/greg/Desktop/html/divs.html'
+    url='file://~/Desktop/html/divs.html'
   elif [ "$1" == "lines" ]; then
     url='http://gregtatum.com/poems/wandering-lines/3/'
   elif [ "$1" != "" ]; then
@@ -88,14 +117,14 @@ mr() {
 
   # MOZ_ALLOW_DOWNGRADE doesn't warn me about profile versions being wrong.
   MOZ_ALLOW_DOWNGRADE=1 MOZ_QUIET=1 mach run \
-    --profile /Users/greg/firefox-profile/dev2 \
+    --profile ~/firefox-profile/dev2 \
     --url $url $rest
 }
 
-alias mr-history-plus="MOZ_ALLOW_DOWNGRADE=1 MOZ_QUIET=1 mach run --profile /Users/greg/firefox-profile/history-plus"
+alias mr-history-plus="MOZ_ALLOW_DOWNGRADE=1 MOZ_QUIET=1 mach run --profile ~/firefox-profile/history-plus"
 
 talos-log() {
-  curl -s --compressed $1 | node /Users/greg/scripts/mochitest-formatter/from-talos-log.js
+  curl -s --compressed $1 | node ~/scripts/mochitest-formatter/from-talos-log.js
 }
 
 perf-html-blame() {

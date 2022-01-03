@@ -29,4 +29,9 @@ export HISTCONTROL=ignoredups
 shopt -s cmdhist
 bind '"\e[A":history-search-backward'
 bind '"\e[B":history-search-forward'
-export PS1=$(build-prompt.sh)
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  export PS1=$(build-prompt.sh)
+else
+  ./update-repo.sh
+fi

@@ -1,5 +1,5 @@
 # hg autocompletion
-. /usr/local/Cellar/mercurial/5.8.1/etc/bash_completion.d/hg-completion.bash
+# . /usr/local/Cellar/mercurial/5.9.1/etc/bash_completion.d/hg-completion.bash
 
 #hg aliases
 # alias hg="chg"
