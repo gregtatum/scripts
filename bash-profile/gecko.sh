@@ -1,6 +1,6 @@
 revs() {
   # List all current things in my review queue
-  node ~/scripts/my-reviews/phab '~/dev/gecko' 'PHID-USER-hch2p624jejt4kddoqow'
+  node ~/scripts/my-reviews/phab "$HOME/dev/gecko" 'PHID-USER-hch2p624jejt4kddoqow'
   node ~/scripts/my-reviews/github 'unicode-org' 'icu4x' 'gregtatum'
   node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler' 'gregtatum'
   node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler-server' 'gregtatum'
