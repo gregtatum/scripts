@@ -4,6 +4,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
   alias ls="ls -ahlX --color"
   alias think="Already on the 🐧"
+  alias code="./remote-code.sh"
 fi
 
 alias ltst="ls -t | head -15"

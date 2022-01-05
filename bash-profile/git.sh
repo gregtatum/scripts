@@ -45,9 +45,9 @@ gdh() {
   if [[ $1 =~ ^\^ ]] ; then
     CARETS=$1
     shift
-    git diff head$CARETS $@
+    git diff HEAD$CARETS $@
   else
-    git diff head $*
+    git diff HEAD $*
   fi
 }
 gaaca() {
