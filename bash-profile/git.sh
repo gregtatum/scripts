@@ -98,6 +98,15 @@ git_branch() {
 	fi
 }
 
+ta() {
+	if [ "$1" == "" ]
+	then
+    echo "tmux attach"
+	else
+    echo "tmux attach -t $1"
+  fi
+}
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
   source ~/git-completion.bash
 fi
