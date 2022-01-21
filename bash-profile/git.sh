@@ -101,9 +101,9 @@ git_branch() {
 ta() {
 	if [ "$1" == "" ]
 	then
-    echo tmux attach
+    tmux attach
 	else
-    echo tmux attach -t $1
+    tmux attach -t $1
   fi
 }
 
