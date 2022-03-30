@@ -15,6 +15,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
   # ignore caffeinate for the desktop machine.
   alias mach="./mach"
+  cd ~/dev/gecko
 fi
 alias mb="mach build"
 alias mbb="mach build binaries"
