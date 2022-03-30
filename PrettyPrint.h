@@ -105,25 +105,31 @@ PrettyPrint(std::basic_string_view<const char16_t> string, const char *msg = "",
   PrettyPrint(aValue, msg, "const char16_t *");
 }
 
-// /**
-//  * Avoid implicit conversions by doing a template.
-//  */
-// template <typename T> void PrettyPrint(T aValue, const char *msg = "") {
-//   if constexpr (std::is_same_v<T, bool>) {
-//     std::cout << msg << "Boolean(" << (aValue ? "true" : "false") << ")\n";
-//   } else if (std::is_same_v<T, size_t>) {
-//     std::cout << msg << "size_t(" << aValue << ")\n";
-//   } else if (std::is_same_v<T, unsigned long>) {
-//     std::cout << msg << "unsigned long(" << aValue << ")\n";
-//   } else if (std::is_same_v<T, uint8_t>) {
-//     std::cout << msg << "uint8_t(" << static_cast<unsigned int>(aValue)
-//               << ")\n";
-//   } else if (std::is_same_v<T, int32_t>) {
-//     std::cout << msg << "int32_t(" << aValue << ")\n";
-//   } else {
-//     std::cout << msg << "PrettyPrintTODO(" << aValue << ")\n";
-//   }
-// }
+#define PP_HANDLE_TYPE(_type, _value)                                          \
+  if constexpr (std::is_same_v<T, _type>) {                                    \
+    std::cout << msg << #_type << "(" << _value << ")\n";                      \
+  }
+
+/**
+ * Avoid implicit conversions by doing a template.
+ */
+template <typename T> void PrettyPrintPOD(T aValue, const char *msg = "") {
+  // clang-format off
+  PP_HANDLE_TYPE(bool, (aValue ? "true" : "false"))
+  else PP_HANDLE_TYPE(int8_t, static_cast<unsigned int>(aValue))
+  else PP_HANDLE_TYPE(int16_t, aValue)
+  else PP_HANDLE_TYPE(int32_t, aValue)
+  else PP_HANDLE_TYPE(int64_t, aValue)
+  else PP_HANDLE_TYPE(uint8_t, static_cast<unsigned int>(aValue))
+  else PP_HANDLE_TYPE(uint16_t, aValue)
+  else PP_HANDLE_TYPE(uint32_t, aValue)
+  else PP_HANDLE_TYPE(uint64_t, aValue)
+  else PP_HANDLE_TYPE(size_t, aValue)
+  else PP_HANDLE_TYPE(long, aValue)
+  else PP_HANDLE_TYPE(unsigned long, aValue)
+  else std::cout << msg << "PrettyPrintTODO(" << aValue << ")\n";
+  // clang-format on
+}
 
 [[maybe_unused]] static void PrettyPrintBinary(int x) {
   auto *string = new char[9];
@@ -149,49 +155,52 @@ PrettyPrint(std::basic_string_view<const char16_t> string, const char *msg = "",
   std::cout << string;
 }
 
-template <typename A, typename B> void PrettyPrint(A a, B b) {
-  PrettyPrint(a);
-  PrettyPrint(b);
-}
-template <typename A, typename B, typename C> void PrettyPrint(A a, B b, C c) {
-  PrettyPrint(a);
-  PrettyPrint(b);
-  PrettyPrint(c);
-}
-template <typename A, typename B, typename C, typename D>
-void PrettyPrint(A a, B b, C c, D d) {
-  PrettyPrint(a);
-  PrettyPrint(b);
-  PrettyPrint(c);
-  PrettyPrint(d);
-}
-template <typename A, typename B, typename C, typename D, typename E>
-void PrettyPrint(A a, B b, C c, D d, E e) {
-  PrettyPrint(a);
-  PrettyPrint(b);
-  PrettyPrint(c);
-  PrettyPrint(d);
-  PrettyPrint(e);
-}
-template <typename A, typename B, typename C, typename D, typename E,
-          typename F>
-void PrettyPrint(A a, B b, C c, D d, E e, F f) {
-  PrettyPrint(a);
-  PrettyPrint(b);
-  PrettyPrint(c);
-  PrettyPrint(d);
-  PrettyPrint(e);
-  PrettyPrint(f);
-}
-template <typename A, typename B, typename C, typename D, typename E,
-          typename F, typename G>
-void PrettyPrint(A a, B b, C c, D d, E e, F f, G g) {
-  PrettyPrint(a);
-  PrettyPrint(b);
-  PrettyPrint(c);
-  PrettyPrint(d);
-  PrettyPrint(e);
-  PrettyPrint(f);
-}
+// These were taking precedence over other overrides.
+
+// template <typename A, typename B> void PrettyPrint(A a, B b) {
+//   PrettyPrint(a);
+//   PrettyPrint(b);
+// }
+// template <typename A, typename B, typename C> void PrettyPrint(A a, B b, C c)
+// {
+//   PrettyPrint(a);
+//   PrettyPrint(b);
+//   PrettyPrint(c);
+// }
+// template <typename A, typename B, typename C, typename D>
+// void PrettyPrint(A a, B b, C c, D d) {
+//   PrettyPrint(a);
+//   PrettyPrint(b);
+//   PrettyPrint(c);
+//   PrettyPrint(d);
+// }
+// template <typename A, typename B, typename C, typename D, typename E>
+// void PrettyPrint(A a, B b, C c, D d, E e) {
+//   PrettyPrint(a);
+//   PrettyPrint(b);
+//   PrettyPrint(c);
+//   PrettyPrint(d);
+//   PrettyPrint(e);
+// }
+// template <typename A, typename B, typename C, typename D, typename E,
+//           typename F>
+// void PrettyPrint(A a, B b, C c, D d, E e, F f) {
+//   PrettyPrint(a);
+//   PrettyPrint(b);
+//   PrettyPrint(c);
+//   PrettyPrint(d);
+//   PrettyPrint(e);
+//   PrettyPrint(f);
+// }
+// template <typename A, typename B, typename C, typename D, typename E,
+//           typename F, typename G>
+// void PrettyPrint(A a, B b, C c, D d, E e, F f, G g) {
+//   PrettyPrint(a);
+//   PrettyPrint(b);
+//   PrettyPrint(c);
+//   PrettyPrint(d);
+//   PrettyPrint(e);
+//   PrettyPrint(f);
+// }
 
 #endif
