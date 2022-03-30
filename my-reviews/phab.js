@@ -83,7 +83,7 @@ var callConduit/* :CallConduit */ = async function(
   endpoint,
   data
 ) {
-  const results = await run(`echo '${stringify(data)}' | arc call-conduit ${endpoint}`);
+  const results = await run(`echo '${stringify(data)}' | arc call-conduit -- ${endpoint}`);
   return JSON.parse(results);
 }
 
