@@ -1,3 +1,6 @@
+# This is not the global gitignore
+# See ~/scripts/.gitignore_global
+
 db
 db-dumps
 moz-git-tools

@@ -5,7 +5,7 @@
 [push]
 	default = simple
 [alias]
-	detach = switch --detach
+    detach = switch --detach
 	wip = log --graph --pretty=oneline --abbrev-commit
 	br = !git --no-pager branch --sort='committerdate' --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
 	ltst = branch --sort=committerdate

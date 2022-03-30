@@ -7,3 +7,5 @@ package-lock.json
 webpack.local-config.js
 yarn-error.log
 .vscode
+*.cProfile
+mach-run
