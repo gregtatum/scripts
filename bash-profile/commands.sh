@@ -68,7 +68,7 @@ findinfiles() {
 	grep -rnwl . -e $1 --include=$2
 }
 
-alias _tree="\tree -L 2 -C -I 'node_modules|.git|.hg|target'"
+alias _tree="TREE -L 2 -C -I 'node_modules|.git|.hg|target'"
 # Display a shallow tree of files. Pass an argument to match a specific file
 tree() {
   if [ -z "$1" ] || [ ${1:0:1} == "-" ]; then

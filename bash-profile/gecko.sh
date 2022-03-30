@@ -39,6 +39,7 @@ alias build-art-release="change_mozconfig artifact-release"
 alias build-art-debug="change_mozconfig artifact-debug"
 alias build-debug="change_mozconfig debug"
 alias build-android="change_mozconfig android"
+alias phab="moz-phab"
 change_mozconfig() {
   ln -sf ~/dev/gecko/mozconfig-$1 ~/dev/gecko/mozconfig
   echo "Changed the mozconfig to $1"
@@ -230,4 +231,33 @@ test-profiler() {
   mach gtest *Profiler.* && \
   mochi tools/profiler/test --headless && \
   echo "✨ Everything passed! ✨"
+}
+
+# Mach run live language reloading.
+mr-ll() {
+  if [[ "$1" == "build" || "$1" == "build-only" ]]; then
+    ./mach build faster
+    # ./mach npm run bundle --prefix=browser/components/newtab
+  fi
+
+  if [[ "$1" != "build-only" ]]; then
+    ./mach run \
+      --temp-profile \
+      `# General preferences` \
+      --setpref "browser.warnOnQuitShortcut=false" \
+      --setpref "datareporting.policy.dataSubmissionPolicyBypassNotification=true" \
+      --setpref "devtools.toolbox.host=right" \
+      --setpref "devtools.toolbox.host=right" \
+      --setpref "devtools.toolbox.sidebar.width=500" \
+      --setpref "devtools.theme.show-auto-theme-info=false" \
+      `#These enable about:preferences live language switching:` \
+      --setpref "extensions.getAddons.langpacks.url=https://mock-amo-language-tools.glitch.me/?app=firefox&type=language&appversion=%VERSION%" \
+      --setpref "intl.multilingual.enabled=true" \
+      --setpref "intl.multilingual.downloadEnabled=true" \
+      --setpref "intl.multilingual.liveReload=true" \
+      --setpref "intl.multilingual.liveReloadBidirectional=true" \
+      --setpref "intl.multilingual.aboutWelcome.languageMismatchEnabled=true"
+      -- \
+      --new-tab about:preferences
+  fi
 }
