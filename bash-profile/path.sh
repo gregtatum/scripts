@@ -8,6 +8,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   # Use the brew-installed python
   export PATH=~/Library/Python/3.7/bin:$PATH
   export PATH=/usr/local/opt/python/libexec/bin:$PATH
+else
+  export PATH=~/.local/bin:$PATH
 fi
 
 export PATH=~/scripts:$PATH
