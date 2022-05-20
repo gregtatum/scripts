@@ -40,7 +40,7 @@ alias build-art-release="change_mozconfig artifact-release"
 alias build-art-debug="change_mozconfig artifact-debug"
 alias build-debug="change_mozconfig debug"
 alias build-android="change_mozconfig android"
-alias phab="moz-phab"
+alias ph="moz-phab"
 change_mozconfig() {
   ln -sf ~/dev/gecko/mozconfig-$1 ~/dev/gecko/mozconfig
   echo "Changed the mozconfig to $1"

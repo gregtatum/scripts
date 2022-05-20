@@ -19,3 +19,4 @@ export PATH=~/scripts/version-control-tools/git/commands:$PATH
 export PATH=./node_modules/.bin:$PATH
 export PATH=~/dev/gecko-dev:$PATH
 export PATH=~/scripts/phabricator/arcanist/bin:$PATH
+export PATH="/Applications/MuseScore 3.app/Contents/MacOS:$PATH"

@@ -149,3 +149,9 @@ mdev() {
   mkdir ~/dev/$1
 	cd ~/dev/$1
 }
+
+
+
+GLADOS_FILES=(/Users/greg/Dropbox/Resources/Sounds/Glados/*)
+function mtest { afplay ${GLADOS_FILES[RANDOM % ${#GLADOS_FILES[@]}]}; }
+export -f mtest
