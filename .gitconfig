@@ -1,51 +1,51 @@
 [core]
-	excludesfile = ~/scripts/.gitignore_global
-	editor = vim
-	pager = diff-so-fancy | less -r
+  excludesfile = ~/scripts/.gitignore_global
+  editor = vim
+  pager = diff-so-fancy | less -r
 [push]
-	default = simple
+  default = simple
 [alias]
-    detach = switch --detach
-	wip = log --graph --pretty=oneline --abbrev-commit
-	br = !git --no-pager branch --sort='committerdate' --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
-	ltst = branch --sort=committerdate
-	unadd = reset HEAD
-	uncommit = reset --soft head^
-	co = checkout
-	sw = switch
-	checkout = !sh -c 'echo "Use git switch"'
-	r = remote -vv
-	ls = log --graph --abbrev-commit --decorate --all --date=short --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ad%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
-	# oneline = log --pretty=oneline -n 20 --first-parent
-	oneline = log --pretty=format:'%C(yellow)%h %C(red)%ad %C(magenta)%an%C(green)%d %C(reset)%s' --date=short -n 25 --first-parent
-	me = !"git ls --author 'Greg Tatum'"
-	pr = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
-	pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
-	fp = !sh -c 'git pull --ff -q "$0" "$1" && git fetch -q "$0"'
-	rfp = !sh -c 'git checkout "$1" && git fp "$0" "$1" && git co - && git rebase -i "$1"'
-	changedate = "!d=\"$(gdate -d \"$1\")\" && shift && GIT_COMMITTER_DATE=\"$d\" \
-		git commit --amend --no-edit --date \"$d\""
-	up = "!f() { git checkout main && git pull --ff-only && git checkout -; }; f"
-	reup = "!f() { git checkout main && git pull --ff-only && git checkout - && git rebase main; }; f"
+  detach = switch --detach
+  wip = log --graph --pretty=oneline --abbrev-commit
+  br = !git --no-pager branch --sort='committerdate' --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
+  ltst = branch --sort=committerdate
+  unadd = reset HEAD
+  uncommit = reset --soft head^
+  co = checkout
+  sw = switch
+  checkout = !sh -c 'echo "Use git switch"'
+  r = remote -vv
+  ls = log --graph --abbrev-commit --decorate --all --date=short --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ad%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+  # oneline = log --pretty=oneline -n 20 --first-parent
+  oneline = log --pretty=format:'%C(yellow)%h %C(red)%ad %C(magenta)%an%C(green)%d %C(reset)%s' --date=short -n 25 --first-parent
+  me = !"git ls --author 'Greg Tatum'"
+  pr = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+  pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
+  fp = !sh -c 'git pull --ff -q "$0" "$1" && git fetch -q "$0"'
+  rfp = !sh -c 'git checkout "$1" && git fp "$0" "$1" && git co - && git rebase -i "$1"'
+  changedate = "!d=\"$(gdate -d \"$1\")\" && shift && GIT_COMMITTER_DATE=\"$d\" \
+    git commit --amend --no-edit --date \"$d\""
+  up = "!f() { git checkout main && git pull --ff-only && git checkout -; }; f"
+  reup = "!f() { git checkout main && git pull --ff-only && git checkout - && git rebase main; }; f"
   now = !"git commit --amend --date=\"$(date)\" --no-edit"
-	find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
-	show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git show $merge'"
+  find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
+  show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git show $merge'"
 [color]
-	ui = true
+  ui = true
 [gist]
-	username = gregtatum
+  username = gregtatum
 [diff-so-fancy]
-	#stripLeadingSymbols = false
-	#markEmptyLines = false
-	#changeHunkIndicators = false
-	##useUnicodeRuler = false
+  #stripLeadingSymbols = false
+  #markEmptyLines = false
+  #changeHunkIndicators = false
+  ##useUnicodeRuler = false
 [commit]
-	gpgsign = false
+  gpgsign = false
 [gpg]
   program = gpg
 [absorb]
   maxStack=50
 [init]
-	defaultBranch = main
+  defaultBranch = main
 [advice]
-	detachedHead = false
+  detachedHead = false
