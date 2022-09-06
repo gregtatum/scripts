@@ -25,14 +25,18 @@ const RESET_COLOR = '\x1b[00m'
   process.stdin
     .pipe(split())
     .pipe(through2.obj(function(line, _, callback) {
+      // if (/INFO - GECKO\(\d+\)/.test(line)) {}
       // if (unhelpfulCssErrors(line)) {}
-      // else if (unhelpfulJsErrors(line)) {}
-      // else if (isTestingPreamble(line)) {}
-      // else if (isTestingPostamble(line)) {}
-      // else if (isTestingPostamble(line)) {}
-      if (/INFO - GECKO\(\d+\)/.test(line)) {
-        // Do nothing
-      } else if (/INFO - TEST-(OK)|(PASS)/.test(line))
+      // if (unhelpfulJsErrors(line)) {}
+      // if (isTestingPreamble(line)) {}
+      // if (isTestingPostamble(line)) {}
+      // if (isTestingPostamble(line)) {}
+
+      if (/DocShellAndDOMWindowLeak/.test(line)) {}
+      else if (/\| leakcheck \|/.test(line)) {}
+      else if (/XPCOM_MEM_BLOAT_LOG/.test(line)) {}
+
+      else if (/INFO - TEST-(OK)|(PASS)/.test(line))
         output(this, line, PASS_COLOR)
       else if (/INFO - TEST-UNEXPECTED-FAIL/.test(line))
         output(this, line, FAIL_COLOR)
@@ -40,18 +44,18 @@ const RESET_COLOR = '\x1b[00m'
         output(this, line, START_COLOR)
       else if (/INFO - TEST-/.test(line))
         output(this, line, OTHER_COLOR)
+      else if (/ERROR - /.test(line))
+        output(this, line, FAIL_COLOR)
       else if (/!!!/.test(line))
         output(this, line, DEBUG_COLOR)
       else if (/Browser Chrome Test Summary$/.test(line))
         output(this, line, SUMMARY_COLOR)
       else if (/((INFO -)|([\s]+))(Passed|Failed|Todo):/.test(line))
         output(this, line, SUMMARY_COLOR)
-      else if (/INFO/.test(line)) {
-        // output(this, line, INFO_COLOR)
-      }
-      else {
-        // output(this, line, DIM_COLOR)
-      }
+      else if (/INFO/.test(line))
+        output(this, line, INFO_COLOR)
+      else
+        output(this, line, DIM_COLOR)
       callback()
     }))
     .pipe(process.stdout)
