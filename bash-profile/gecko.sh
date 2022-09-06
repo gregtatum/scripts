@@ -41,6 +41,7 @@ alias build-art-debug="change_mozconfig artifact-debug"
 alias build-debug="change_mozconfig debug"
 alias build-android="change_mozconfig android"
 alias ph="moz-phab"
+alias ph-stack="moz-phab submit main HEAD"
 change_mozconfig() {
   ln -sf ~/dev/gecko/mozconfig-$1 ~/dev/gecko/mozconfig
   echo "Changed the mozconfig to $1"
@@ -129,7 +130,13 @@ mr() {
     --url $url $rest
 }
 
-alias mr-history-plus="MOZ_ALLOW_DOWNGRADE=1 MOZ_QUIET=1 mach run --profile ~/firefox-profile/history-plus"
+mr-history-plus() {
+  echo "Open: chrome://browser/content/history-plus/index.html"
+  MOZ_ALLOW_DOWNGRADE=1 \
+  MOZ_QUIET=1 \
+  mach run \
+    --profile ~/firefox-profile/history-plus
+}
 
 talos-log() {
   curl -s --compressed $1 | node ~/scripts/mochitest-formatter/from-talos-log.js
@@ -248,7 +255,6 @@ mr-ll() {
       --setpref "browser.warnOnQuitShortcut=false" \
       --setpref "datareporting.policy.dataSubmissionPolicyBypassNotification=true" \
       --setpref "devtools.toolbox.host=right" \
-      --setpref "devtools.toolbox.host=right" \
       --setpref "devtools.toolbox.sidebar.width=500" \
       --setpref "devtools.theme.show-auto-theme-info=false" \
       `#These enable about:preferences live language switching:` \
@@ -261,4 +267,33 @@ mr-ll() {
       -- \
       --new-tab about:preferences
   fi
+}
+
+# Mach run content caching
+mr-cc() {
+  echo "Open: chrome://browser/content/history-plus/index.html";
+
+  if [[ "$1" == "fixed" ]]; then
+    echo "Using profile obj-ff-dbg/tmp/profile-_ywnd37f"
+    ./mach run \
+      --profile obj-ff-dbg/tmp/profile-_ywnd37f \
+      -- \
+      --new-tab https://en.wikipedia.org/wiki/Cat
+    return
+  fi
+
+  ./mach run \
+    --temp-profile \
+    `# General preferences` \
+    --setpref "browser.warnOnQuitShortcut=false" \
+    --setpref "datareporting.policy.dataSubmissionPolicyBypassNotification=true" \
+    --setpref "devtools.toolbox.host=right" \
+    --setpref "devtools.toolbox.sidebar.width=500" \
+    --setpref "devtools.theme.show-auto-theme-info=false" \
+    `# Enable content caching:` \
+    --setpref "extensions.getAddons.langpacks.url=https://mock-amo-language-tools.glitch.me/?app=firefox&type=language&appversion=%VERSION%" \
+    --setpref "browser.contentCache.enabled=true" \
+    --setpref "browser.contentCache.logLevel=All" \
+    -- \
+    --new-tab https://en.wikipedia.org/wiki/Cat
 }
