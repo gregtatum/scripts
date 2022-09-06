@@ -5,9 +5,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
   export PATH=~/Library/Android/sdk/emulator:$PATH
   export PATH=~/Library/Android/sdk/platform-tools:$PATH
-  # Use the brew-installed python
-  export PATH=~/Library/Python/3.7/bin:$PATH
-  export PATH=/usr/local/opt/python/libexec/bin:$PATH
+  # Use the brew-installed python, keep in sync with desired python version.
+  # Keep the "python.defaultInterpreterPath" vscode settings in sync which changing these.
+  export PATH=~/Library/Python/3.9/bin:$PATH
+  export PATH=/usr/local/opt/python@3.9/libexec/bin:$PATH
 else
   export PATH=~/.local/bin:$PATH
 fi
