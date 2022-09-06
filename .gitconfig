@@ -2,6 +2,8 @@
   excludesfile = ~/scripts/.gitignore_global
   editor = vim
   pager = diff-so-fancy | less -r
+  fsmonitor = true
+  untrackedcache = true
 [push]
   default = simple
 [alias]
