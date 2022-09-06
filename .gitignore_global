@@ -9,3 +9,4 @@ yarn-error.log
 .vscode
 *.cProfile
 mach-run
+__pycache__
