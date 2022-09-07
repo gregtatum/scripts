@@ -11,7 +11,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH=/usr/local/opt/python@3.9/libexec/bin:$PATH
 else
   export PATH=~/.local/bin:$PATH
-  export PATH=~/miniconda3/bin/:$PATH
 fi
 
 export PATH=~/scripts:$PATH
