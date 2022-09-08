@@ -27,12 +27,14 @@ export LC_CTYPE=en_US.UTF-8
 #---------------------------------------------
 # Set up pyenv.
 
-  # This doesn't seem to work, and it's slow:
-  # eval "$(pyenv init -)"
-  # eval "$(pyenv virtualenv-init -)"
-init-pyenv() {
+pyenv() {
+  echo "Setting up pyenv."
+  unset -f pyenv
   eval "$(pyenv init -)"
   eval "$(pyenv virtualenv-init -)"
+  echo "Done, passing command to pyenv..."
+  echo ""
+  pyenv $@
 }
 
 

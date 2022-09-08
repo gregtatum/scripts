@@ -273,13 +273,16 @@ mr-ll() {
 mr-cc() {
   echo "Open: chrome://browser/content/history-plus/index.html";
 
-  if [[ "$1" == "fixed" ]]; then
-    echo "Using profile obj-ff-dbg/tmp/profile-_ywnd37f"
+  if [[ "$1" != "temp" ]]; then
+    echo "Using profile ~/firefox-profile/content-cache"
+    echo "Run: `mr-cc temp` for a temp profile"
     ./mach run \
-      --profile obj-ff-dbg/tmp/profile-_ywnd37f \
+      --profile ~/firefox-profile/content-cache \
       -- \
       --new-tab https://en.wikipedia.org/wiki/Cat
     return
+  else
+    echo "Using temp profile"
   fi
 
   ./mach run \
@@ -291,9 +294,35 @@ mr-cc() {
     --setpref "devtools.toolbox.sidebar.width=500" \
     --setpref "devtools.theme.show-auto-theme-info=false" \
     `# Enable content caching:` \
-    --setpref "extensions.getAddons.langpacks.url=https://mock-amo-language-tools.glitch.me/?app=firefox&type=language&appversion=%VERSION%" \
     --setpref "browser.contentCache.enabled=true" \
     --setpref "browser.contentCache.logLevel=All" \
     -- \
     --new-tab https://en.wikipedia.org/wiki/Cat
+}
+
+mr-cc() {
+  echo "Open: chrome://browser/content/history-plus/index.html";
+  echo "Using profile ~/firefox-profile/content-cache"
+  echo ""
+
+  ./mach run \
+    --profile ~/firefox-profile/content-cache \
+    -- \
+    --new-tab https://en.wikipedia.org/wiki/Cat
+}
+
+mr-cc-temp() {
+  ./mach run \
+    --temp-profile \
+    `# General preferences` \
+    --setpref "browser.warnOnQuitShortcut=false" \
+    --setpref "datareporting.policy.dataSubmissionPolicyBypassNotification=true" \
+    --setpref "devtools.toolbox.host=right" \
+    --setpref "devtools.toolbox.sidebar.width=500" \
+    --setpref "devtools.theme.show-auto-theme-info=false" \
+    `# Enable content caching:` \
+    --setpref "browser.contentCache.enabled=true" \
+    --setpref "browser.contentCache.logLevel=All" \
+    -- \
+    --new-tab https://en.wikipedia.org/wiki/Dog
 }
