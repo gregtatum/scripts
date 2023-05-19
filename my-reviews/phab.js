@@ -162,6 +162,9 @@ function printHeader (text/* :string */) {
     if (!title) {
       return true;
     }
+    if (!revision.fields['bugzilla.bug-id']) {
+      return false;
+    }
     return !title.match(/\bWIP\b/)
   }));
 

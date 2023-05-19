@@ -7,6 +7,11 @@ else
   alias code="~/scripts/remote-code.sh"
 fi
 
+# Echo out something as if it was a prompt command.
+echoprompt() {
+  echo -e "\n\033[1;31m➤\033[0m $*\n"
+}
+
 alias ltst="ls -t | head -15"
 alias clear="echo -ne '\033]50;ClearScrollback\a'"
 alias showhidden="bash ~/hidden-show.sh"
@@ -24,18 +29,30 @@ alias brew-upgrade="brew update && brew upgrade"
 alias kill-flow="pkill -f flow-bin"
 alias kill-audio="sudo killall coreaudiod"
 alias pngquant="pngquant --ext .tiny.png"
-alias ccat="~/Library/Python/3.7/bin/pygmentize -O style=monokai -f console256 -g"
+alias ccat="pygmentize"
 alias serve="http-server"
 alias pserve="php -S localhost:8000 router.php"
-alias edit-hosts="code /private/etc/hosts"
-alias edit-profile="code ~/scripts/bash-profile"
+alias edit-hosts="sudo vim /private/etc/hosts"
+alias edit-profile="code ~/scripts"
 alias edit-cron="env EDITOR=vim crontab -e"
 alias nr="npm run"
 alias jest="clear && jest"
 alias ytdl="youtube-dl -f mp4"
 alias folder-size="du -d 1 -h ."
 alias cargo-test-debug="node ~/scripts/rust-scripts/cargo-test-debug.js"
-alias find="find . \
+find() {
+  FIND \
+  $* \
+  -not -path '*/.git/*' \
+  -not -path '*/.hg/*' \
+  -not -path '*/node_modules/*' \
+  -not -path '*/target/*' \
+  -not -path '*/obj-ff-artifact/*' \
+  -not -path '*/obj-ff-debug/*' \
+  -not -path '*/obj-ff-release/*' \
+  -not -path '*/thidparty/*'
+}
+alias search="find . \
   -not -path '*/.git/*' \
   -not -path '*/.hg/*' \
   -not -path '*/node_modules/*' \
@@ -97,45 +114,19 @@ files() {
 #--------------------------------------------------------------------
 # Shortcuts
 me() {
-  if [ $1 == "gl-engine" ] ; then
-    cd ~/me/gl-engine/node_modules/gl-engine
-  else
-  	cd ~/me/$1
-  fi
+  cd ~/me/$1
 }
-_me() {
-  local cur
-  if [ $COMP_CWORD -eq 1 ] ; then
-    cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(compgen -f ~/me/$cur | cut -d"/" -f5 ) )
-  fi
-}
-complete -o filenames -F _me me
-#----------------------------
+compdef '_files -W ~/me' me
+
 lem() {
 	cd ~/lem/$1
 }
-_lem() {
-  local cur
-  if [ $COMP_CWORD -eq 1 ] ; then
-    cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(compgen -f ~/lem/$cur | cut -d"/" -f5 ) )
-  fi
-}
-complete -o filenames -F _lem lem
-#----------------------------
+compdef '_files -W ~/lem' lem
+
 dev() {
 	cd ~/dev/$1
 }
-_dev() {
-  local cur
-  if [ $COMP_CWORD -eq 1 ] ; then
-    cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(compgen -f ~/dev/$cur | cut -d"/" -f5 ) )
-  fi
-}
-complete -o filenames -F _dev dev
-#----------------------------
+compdef '_files -W ~/dev' dev
 mme() {
   mkdir ~/me/$1
 	cd ~/me/$1
@@ -149,8 +140,7 @@ mdev() {
 	cd ~/dev/$1
 }
 
-
-
 GLADOS_FILES=(/Users/greg/Dropbox/Resources/Sounds/Glados/*)
-function mtest { afplay ${GLADOS_FILES[RANDOM % ${#GLADOS_FILES[@]}]}; }
-export -f mtest
+function mtest {
+  afplay ${GLADOS_FILES[RANDOM % ${#GLADOS_FILES[@]}]};
+}

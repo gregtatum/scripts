@@ -1,10 +1,10 @@
-// This file is for spitting out something nicely formatted from the Talos logs.
+// This file is for spitting out something nicely formatted from the Treeherder logs.
 
-// talos-log {
-//   curl -s --compressed $1 | node /Users/gregorytatum/scripts/mochitest-formatter/from-talos-log.js
+// treeherder-log {
+//   curl -s --compressed $1 | node /Users/gregorytatum/scripts/mochitest-formatter/from-treeherder-log.js
 // }
 
-// Usage: `talos-log URL`
+// Usage: `treeherder-log URL`
 
 const split = require('split')
 const x256 = require('x256')
@@ -14,13 +14,16 @@ const through2 = require('through2')
 const PASS_COLOR = color('green')
 const START_COLOR = color('blue')
 const FAIL_COLOR = color('red')
-const OTHER_COLOR = color('yellow')
+const TEST_BOUND = color('yellow')
+const OTHER_COLOR = color('white')
 const DIM_COLOR = color([ 'dim', [91,127,127] ])
 const INFO_COLOR = color([ 'bright', [91,127,127] ])
 const SUMMARY_COLOR = color([ 'bright', [255,255,255] ])
 const DEBUG_COLOR = color([ 'bright', [255,0,255] ])
 const RESET_COLOR = '\x1b[00m'
 
+let indent = '';
+let isTest = false;
 ;(function() {
   process.stdin
     .pipe(split())
@@ -32,10 +35,30 @@ const RESET_COLOR = '\x1b[00m'
       // if (isTestingPostamble(line)) {}
       // if (isTestingPostamble(line)) {}
 
-      if (/DocShellAndDOMWindowLeak/.test(line)) {}
-      else if (/\| leakcheck \|/.test(line)) {}
-      else if (/XPCOM_MEM_BLOAT_LOG/.test(line)) {}
+      if (/Leaving test bound/.test(line)) {
+        isTest = false;
+        indent = indent.slice(0, -4);
+      }
+      if (indent) {
+        line = indent + line;
+      }
+      if (/Entering test bound/.test(line)) {
+        isTest = true;
+        indent += '    ';
+      }
 
+
+      // Skip these:
+      if (!isTest) {}
+      else if (/DocShellAndDOMWindowLeak/.test(line)) {}
+      else if (/zombiecheck \|/.test(line)) {}
+      else if (/leakcheck \|/.test(line)) {}
+      else if (/XPCOM_MEM_BLOAT_LOG/.test(line)) {}
+      else if (/\d+ Marionette/.test(line)) {}
+      else if (/Buffered messages logged/.test(line)) {}
+      else if (/Buffered messages finished/.test(line)) {}
+
+      // Color these:
       else if (/INFO - TEST-(OK)|(PASS)/.test(line))
         output(this, line, PASS_COLOR)
       else if (/INFO - TEST-UNEXPECTED-FAIL/.test(line))
@@ -44,6 +67,8 @@ const RESET_COLOR = '\x1b[00m'
         output(this, line, START_COLOR)
       else if (/INFO - TEST-/.test(line))
         output(this, line, OTHER_COLOR)
+      else if (/test bound/.test(line))
+        output(this, line, TEST_BOUND)
       else if (/ERROR - /.test(line))
         output(this, line, FAIL_COLOR)
       else if (/!!!/.test(line))
@@ -62,7 +87,26 @@ const RESET_COLOR = '\x1b[00m'
 })()
 
 function output (stream, line, color) {
-  line = line.replace(/^\d+ INFO/, "⎮ ")
+  // line = line.replace(/^\d+ INFO/, "⎮ ");
+
+  // [task 2023-04-06T19:11:05.550Z] 19:11:05     INFO - TEST-INFO | started process GECKO(1623)
+  line = line.replace(/\[task .*?\]\s*[\d:]*\s*/, '');
+  //                   \[        \]   |     |
+  //                     task .*?     |     \s*                Match trailing whitespace
+  //                                  [\d:]*                   Match the "19:11:05"
+  //
+
+  // | INFO - GECKO(2771) |
+  line = line.replace(/\|? ?INFO - GECKO\(\d+\) \|/, '');
+  //                       INFO - GECKO(2771) |
+  // INFO - TEST-PASS |
+  line = line.replace(/INFO - TEST-PASS \|/, '✓');
+
+  // INFO - TEST-UNEXPECTED-FAIL |
+  line = line.replace(/INFO - TEST-UNEXPECTED-FAIL \|/, '✕ TEST-UNEXPECTED-FAIL |');
+
+  line = line.replace(/^\w*INFO -\w*/, '');
+
   stream.push(color + line + RESET_COLOR + "\n")
 }
 

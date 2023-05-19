@@ -22,6 +22,7 @@ alias gaa="git add .; gs"
 alias gcob="git checkout -b"
 alias gc="git commit -m"
 alias gca="git commit --amend --no-edit; git status"
+alias gcf="git commit --fixup"
 alias gcpa="git cherry-pick --abort"
 alias gcpc="git cherry-pick --continue"
 alias grvi="git revise -i"
@@ -34,23 +35,21 @@ alias gp="git push"
 alias gr="git remote -v"
 alias gl="git oneline"
 alias gd="git diff"
+alias gdf="git diff --name-only" # git diff "files"
 alias gcm="git commit -m"
 alias screwit="gaaca; gp -f --no-verify"
-# git absorb is hard to run, this will apply it and spit out messages that give
-# more context.
-alias gabsorb="git absorb && echo '' && git oneline && echo '' && git status && echo '' && echo 'Now run gapply'"
-# Apply git absorb's commits.
-alias gapply="git rebase -i --autosquash"
-alias pr="gh pr"
-gdh() {
-  if [[ $1 =~ ^\^ ]] ; then
-    CARETS=$1
-    shift
-    git diff HEAD$CARETS $@
-  else
-    git diff HEAD $*
-  fi
+
+# Run git absorb
+gabs() {
+  echoprompt "git absorb --base main"
+  git absorb --base main
+
+  echoprompt "git status"
+  git status
 }
+
+alias pr="gh pr"
+alias gdh="git diff HEAD"
 gaaca() {
   git add .
   gca $@
@@ -109,5 +108,21 @@ ta() {
 }
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  source ~/git-completion.bash
+  # TODO - This is not working.
+  # source ~/git-completion.zsh
 fi
+
+gstats() {
+  git shortlog \
+    --summary \
+    --numbered \
+    --no-merges \
+    --since="Jan 01 2023" \
+    --invert-grep \
+    --grep "Vendor libwebrtc" \
+    --grep "Backed out" \
+    --perl-regexp --author='^((?!(moz-wptsync-bot|Mozilla Releng Treescript|dependabot)).*)$' \
+  | nl \
+  | head --lines 100 \
+  | tac
+}

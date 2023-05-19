@@ -12,6 +12,7 @@
   br = !git --no-pager branch --sort='committerdate' --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
   ltst = branch --sort=committerdate
   unadd = reset HEAD
+  unstage = restore --staged
   uncommit = reset --soft head^
   co = checkout
   sw = switch

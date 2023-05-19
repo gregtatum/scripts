@@ -1,11 +1,12 @@
 revs() {
   # List all current things in my review queue
   node ~/scripts/my-reviews/phab "$HOME/dev/gecko" 'PHID-USER-hch2p624jejt4kddoqow'
-  node ~/scripts/my-reviews/github 'unicode-org' 'icu4x' 'gregtatum'
-  node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler' 'gregtatum'
-  node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler-server' 'gregtatum'
+  # node ~/scripts/my-reviews/github 'unicode-org' 'icu4x' 'gregtatum'
+  # node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler' 'gregtatum'
+  # node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler-server' 'gregtatum'
   # node ~/scripts/my-reviews/github 'mozilla' 'treeherder' 'gregtatum'
   node ~/scripts/my-reviews/github 'projectfluent' 'fluent.js' 'gregtatum'
+  node ~/scripts/my-reviews/github 'projectfluent' 'fluent-rs' 'gregtatum'
 }
 
 export MACH_NOTIFY_MINTIME=0 # Make mach notify every time
@@ -24,13 +25,39 @@ alias mc="mach clobber"
 alias mcb="mc && mb"
 # MOZ_QUIET will produce fewer logs, but some leaktests may fail that process
 # the stdout.
-alias mt="MOZ_QUIET=1 mach test"
-alias mochi="MOZ_QUIET=1 ./mach mochitest"
-alias xpc="MOZ_QUIET=1 mach xpcshell-test"
-alias mtd="MOZ_QUIET=1 mach mochitest --jsdebugger"
+alias mt="clear; MOZ_QUIET=1 mach test"
+_echoprompt() {
+  red='\033[0;31m'
+  clear='\033[0m'
+  echo -n -e "${red}➤${clear} "
+}
+mochii() {
+  clear
+  _echoprompt
+  echo "mochii $*"
+  echo ""
+  MOZ_QUIET=1 ./mach mochitest --max-timeouts 1000 --timeout 10000 --log-mach-verbose $*
+}
+mochi() {
+  clear
+  _echoprompt
+  echo "mochi $*"
+  echo ""
+  MOZ_QUIET=1 ./mach mochitest --max-timeouts 1000 --timeout 10000 --log-mach-verbose $* | node ~/scripts/mochitest-formatter
+}
+xpc() {
+  clear
+  _echoprompt
+  echo "./mach xcpshell-test $*"
+  echo ""
+  MOZ_QUIET=1 ./mach xcpshell-test $*
+}
+
+alias mr="mach run"
 alias mbfr="mbf && mr"
 alias mbr="mb && mr"
 alias mlint="mach lint -wo --fix"
+alias meslint="mach lint --linter eslint"
 alias mboot="mach --no-interactive bootstrap --application-choice 'Firefox for Desktop'"
 alias mdb="mach build-backend -b CompileDB"
 alias msubmit="mach lint --warnings --outgoing && moz-phab submit"
@@ -42,44 +69,6 @@ alias build-debug="change_mozconfig debug"
 alias build-android="change_mozconfig android"
 alias ph="moz-phab"
 alias ph-stack="moz-phab submit main HEAD"
-change_mozconfig() {
-  ln -sf ~/dev/gecko/mozconfig-$1 ~/dev/gecko/mozconfig
-  echo "Changed the mozconfig to $1"
-}
-
-mpull() {
-  if [[ $(git diff --stat) != '' ]]; then
-      echo "Current branch is dirty..."
-      echo
-      git status
-      echo
-      echo "Please resolve these changes before continuing..."
-  else
-    git cinnabar fsck
-    git fetch --tags hg::tags: tag "*"
-    git fetch --all
-    git checkout origin/bookmarks/central
-  fi
-}
-
-mreup() {
-  if [[ $(git diff --stat) != '' ]]; then
-      echo "Current branch is dirty..."
-      echo
-      git status
-      echo
-      echo "Please resolve these changes before continuing..."
-  else
-    git cinnabar fsck
-    git fetch --tags hg::tags: tag "*"
-    git fetch --all
-    git rebase origin/bookmarks/central
-  fi
-}
-
-mtx() {
-  unbuffer mach test $* | cut -c -$COLUMNS
-}
 
 try() {
   echo "DevTools:"
@@ -94,52 +83,16 @@ try() {
 
 alias nightly="/Applications/FirefoxNightly.app/Contents/MacOS/firefox-bin --ProfileManager"
 
-mtf() {
-  mtfh --headless "$@"
-}
-mtfd() {
-  mtfh --jsdebugger "$@"
-}
-mtfh() {
-  clear
-  mach mochitest "$@" | node ~/scripts/mochitest-formatter/index.js
-}
-mr() {
-  if [ "$(pwd)" == "~/dev/spidermonkey" ]; then
-    mach run
-    return
-  fi
-
-  if [ "$1" == "divs" ]; then
-    url='file://~/Desktop/html/divs.html'
-  elif [ "$1" == "lines" ]; then
-    url='http://gregtatum.com/poems/wandering-lines/3/'
-  elif [ "$1" != "" ]; then
-    url=$1
-  else
-    url='about:blank'
-    # url='http://localhost:4242'
-    # url='about:debugging'
-  fi
-
-  rest="${@:2}"
-
-  # MOZ_ALLOW_DOWNGRADE doesn't warn me about profile versions being wrong.
-  MOZ_ALLOW_DOWNGRADE=1 MOZ_QUIET=1 mach run \
-    --profile ~/firefox-profile/dev2 \
-    --url $url $rest
-}
-
-mr-history-plus() {
-  echo "Open: chrome://browser/content/history-plus/index.html"
+mr-contentcache() {
+  echo "Open: chrome://browser/content/contentcache/contentcache.html"
   MOZ_ALLOW_DOWNGRADE=1 \
   MOZ_QUIET=1 \
   mach run \
-    --profile ~/firefox-profile/history-plus
+    --profile ~/firefox-profile/contentcache
 }
 
-talos-log() {
-  curl -s --compressed $1 | node ~/scripts/mochitest-formatter/from-talos-log.js
+treeherder-log() {
+  curl -s --compressed $1 | node ~/scripts/mochitest-formatter/from-treeherder-log.js
 }
 
 perf-html-blame() {
@@ -233,6 +186,12 @@ mozup() {
   mb
 }
 
+test-translations() {
+  mochi --headless \
+    toolkit/components/translations/tests \
+    browser/components/translations/tests
+}
+
 test-profiler() {
   xpc tools/profiler/tests && \
   obj-ff-release/dist/bin/TestBaseProfiler && \
@@ -269,39 +228,9 @@ mr-ll() {
   fi
 }
 
-# Mach run content caching
 mr-cc() {
-  echo "Open: chrome://browser/content/history-plus/index.html";
-
-  if [[ "$1" != "temp" ]]; then
-    echo "Using profile ~/firefox-profile/content-cache"
-    echo "Run: `mr-cc temp` for a temp profile"
-    ./mach run \
-      --profile ~/firefox-profile/content-cache \
-      -- \
-      --new-tab https://en.wikipedia.org/wiki/Cat
-    return
-  else
-    echo "Using temp profile"
-  fi
-
-  ./mach run \
-    --temp-profile \
-    `# General preferences` \
-    --setpref "browser.warnOnQuitShortcut=false" \
-    --setpref "datareporting.policy.dataSubmissionPolicyBypassNotification=true" \
-    --setpref "devtools.toolbox.host=right" \
-    --setpref "devtools.toolbox.sidebar.width=500" \
-    --setpref "devtools.theme.show-auto-theme-info=false" \
-    `# Enable content caching:` \
-    --setpref "browser.contentCache.enabled=true" \
-    --setpref "browser.contentCache.logLevel=All" \
-    -- \
-    --new-tab https://en.wikipedia.org/wiki/Cat
-}
-
-mr-cc() {
-  echo "Open: chrome://browser/content/history-plus/index.html";
+  echo "I broke this, copy over the places db and the content cache db to a new profile."
+  echo "Open: chrome://browser/content/contentcache/contentcache.html";
   echo "Using profile ~/firefox-profile/content-cache"
   echo ""
 
@@ -325,4 +254,18 @@ mr-cc-temp() {
     --setpref "browser.contentCache.logLevel=All" \
     -- \
     --new-tab https://en.wikipedia.org/wiki/Dog
+}
+
+mr-fxt() {
+  PROFILE=~/firefox-profile/translations
+  echo "Using profile $PROFILE"
+  echo ""
+
+  ./mach run \
+    --profile $PROFILE \
+    -- \
+    `#--new-tab about:translations` \
+    --new-tab https://elpais.com/ciencia \
+    `#--new-tab about:preferences` \
+    $*
 }
