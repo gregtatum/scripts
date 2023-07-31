@@ -40,7 +40,7 @@ precmd() {
 }
 # zstyle ':vcs_info:git:*' formats 'on %b'
 
-export PROMPT=$($DIR/build-prompt.sh)
+export PROMPT=$(zsh $DIR/build-prompt.sh)
 
 touch $DIR/.secrets
 source $DIR/.secrets
