@@ -13,6 +13,7 @@ export MACH_NOTIFY_MINTIME=0 # Make mach notify every time
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   alias mach="caffeinate -i ./mach" # caffeinate will keep longer builds alive.
+  alias m="caffeinate -i ./mach"
 else
   # ignore caffeinate for the desktop machine.
   alias mach="./mach"
@@ -48,7 +49,7 @@ mochi() {
 xpc() {
   clear
   _echoprompt
-  echo "./mach xcpshell-test $*"
+  echo "./mach xpcshell-test $*"
   echo ""
   MOZ_QUIET=1 ./mach xcpshell-test $*
 }
@@ -265,7 +266,12 @@ mr-fxt() {
     --profile $PROFILE \
     -- \
     `#--new-tab about:translations` \
-    --new-tab https://elpais.com/ciencia \
+    `#--new-tab https://elpais.com/ciencia` \
     `#--new-tab about:preferences` \
     $*
+}
+
+try-translations() {
+  mach try fuzzy --query test-linux1804-64-qr/opt-mochitest-browser-chrome-spi-nw
+  # mach try fuzzy browser/components/translations/tests toolkit/components/translations/tests
 }

@@ -144,3 +144,10 @@ GLADOS_FILES=(/Users/greg/Dropbox/Resources/Sounds/Glados/*)
 function mtest {
   afplay ${GLADOS_FILES[RANDOM % ${#GLADOS_FILES[@]}]};
 }
+
+function mdark {
+  find /Users/greg/Dropbox/Resources/Sounds/Darkness/* \
+    | sort --random-sort \
+    | head -n 1 \
+    | xargs afplay
+}

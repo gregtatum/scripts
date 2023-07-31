@@ -126,3 +126,13 @@ gstats() {
   | head --lines 100 \
   | tac
 }
+
+gstats-all() {
+  git shortlog \
+    --summary \
+    --numbered \
+    --no-merges \
+  | nl \
+  | head --lines 100 \
+  | tac
+}
