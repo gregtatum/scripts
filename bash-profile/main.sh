@@ -50,9 +50,12 @@ source $DIR/commands.sh
 source $DIR/environments.sh
 source $DIR/gecko.sh
 
-# Enable auto completions.
-# https://github.com/zsh-users/zsh-autosuggestions
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-# ZSH_AUTOSUGGEST_STRATEGY=completion
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # Enable auto completions.
+  # https://github.com/zsh-users/zsh-autosuggestions
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  # ZSH_AUTOSUGGEST_STRATEGY=completion
+fi
+
 
 bindkey '^[' autosuggest-accept

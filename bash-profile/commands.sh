@@ -140,8 +140,8 @@ mdev() {
 	cd ~/dev/$1
 }
 
-GLADOS_FILES=(/Users/greg/Dropbox/Resources/Sounds/Glados/*)
 function mtest {
+  GLADOS_FILES=(/Users/greg/Dropbox/Resources/Sounds/Glados/*)
   afplay ${GLADOS_FILES[RANDOM % ${#GLADOS_FILES[@]}]};
 }
 
