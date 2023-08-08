@@ -26,12 +26,11 @@ export LC_CTYPE=en_US.UTF-8
 
 #---------------------------------------------
 # Set up pyenv.
-
+export PYENV_ROOT="$HOME/.pyenv"
 pyenv() {
   echo "Setting up pyenv."
   unset -f pyenv
   eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
   echo "Done, passing command to pyenv..."
   echo ""
   pyenv $@

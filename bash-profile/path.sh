@@ -6,12 +6,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH=~/Library/Android/sdk/platform-tools:$PATH
 
   export PATH="/Applications/MuseScore 3.app/Contents/MacOS:$PATH"
-  export PATH=/usr/local/opt/llvm/bin:$PATH
   export PATH=/Applications/fceux.app/Contents/MacOS:$PATH
   export PATH=/Applications/VLC.app/Contents/MacOS:$PATH
 
   # Use the brew install python.
   export PATH="/opt/homebrew/opt/python@3.10/libexec/bin:$PATH"
+
+  export PATH=/opt/homebrew/opt/llvm/bin:$PATH
+  export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 
 else
   export PATH=~/.local/bin:$PATH
