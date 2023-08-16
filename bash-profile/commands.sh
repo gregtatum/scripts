@@ -37,7 +37,8 @@ alias edit-profile="code ~/scripts"
 alias edit-cron="env EDITOR=vim crontab -e"
 alias nr="npm run"
 alias jest="clear && jest"
-alias ytdl="youtube-dl -f mp4"
+alias ytmp4="youtube-dl -f mp4"
+alias ytmp3="youtube-dl -x --audio-format mp3"
 alias folder-size="du -d 1 -h ."
 alias cargo-test-debug="node ~/scripts/rust-scripts/cargo-test-debug.js"
 find() {
@@ -84,7 +85,8 @@ findinfiles() {
 	grep -rnwl . -e $1 --include=$2
 }
 
-alias _tree="TREE -L 2 -C -I 'node_modules|.git|.hg|target'"
+__tree=$(which tree)
+alias _tree="$__tree -L 2 -C -I 'node_modules|.git|.hg|target'"
 # Display a shallow tree of files. Pass an argument to match a specific file
 tree() {
   if [ -z "$1" ] || [ ${1:0:1} == "-" ]; then

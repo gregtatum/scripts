@@ -16,6 +16,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
   export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 
+  # https://github.com/emscripten-core/emsdk
+  export PATH="/Users/greg/lem/emsdk:$PATH"
+  export PATH="/Users/greg/lem/emsdk/upstream/emscripten:$PATH"
 else
   export PATH=~/.local/bin:$PATH
   export PATH=~/.pyenv/bin:$PATH

@@ -76,7 +76,7 @@ gnot() {
 firstpush() {
   branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
   echo "git push -u gregtatum $branch"
-  git push -u gregtatum $branch $@ && hub browse
+  git push -u gregtatum $branch $@ && gh browse
 }
 
 git_branch() {
