@@ -26,7 +26,7 @@ echo '$(git_branch)\c'
 if [[ "$OSTYPE" == "darwin"* ]]; then
   echo " 🍏\c"
 elif [ "$(hostname)" = "greg-lambda" ]; then
-  echo " λ\c"
+  echo " 🤠\c"
 else
   echo " 🐧\c"
 fi
