@@ -8,6 +8,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH="/Applications/MuseScore 3.app/Contents/MacOS:$PATH"
   export PATH=/Applications/fceux.app/Contents/MacOS:$PATH
   export PATH=/Applications/VLC.app/Contents/MacOS:$PATH
+  export PATH="/Users/greg/.docker/bin:$PATH"
 
   # Use the brew install python.
   export PATH="/opt/homebrew/opt/python@3.10/libexec/bin:$PATH"
