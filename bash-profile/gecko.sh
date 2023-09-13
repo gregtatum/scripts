@@ -14,6 +14,8 @@ export MACH_NOTIFY_MINTIME=0 # Make mach notify every time
 if [[ "$OSTYPE" == "darwin"* ]]; then
   alias mach="caffeinate -i ./mach" # caffeinate will keep longer builds alive.
   alias m="caffeinate -i ./mach"
+elif [ "$(hostname)" = "greg-lambda" ]; then
+  # Customize here.
 else
   # ignore caffeinate for the desktop machine.
   alias mach="./mach"
