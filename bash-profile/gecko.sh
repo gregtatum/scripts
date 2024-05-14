@@ -2,11 +2,13 @@ revs() {
   # List all current things in my review queue
   node ~/scripts/my-reviews/phab "$HOME/dev/gecko" 'PHID-USER-hch2p624jejt4kddoqow'
   # node ~/scripts/my-reviews/github 'unicode-org' 'icu4x' 'gregtatum'
-  # node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler' 'gregtatum'
+  node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler' 'gregtatum'
   # node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler-server' 'gregtatum'
   # node ~/scripts/my-reviews/github 'mozilla' 'treeherder' 'gregtatum'
   node ~/scripts/my-reviews/github 'projectfluent' 'fluent.js' 'gregtatum'
   node ~/scripts/my-reviews/github 'projectfluent' 'fluent-rs' 'gregtatum'
+  node ~/scripts/my-reviews/github 'mozilla' 'firefox-translations-training' 'gregtatum'
+  node ~/scripts/my-reviews/github 'mozilla' 'firefox-translations-models' 'gregtatum'
 }
 
 export MACH_NOTIFY_MINTIME=0 # Make mach notify every time
@@ -39,21 +41,23 @@ mochii() {
   _echoprompt
   echo "mochii $*"
   echo ""
-  MOZ_QUIET=1 ./mach mochitest --max-timeouts 1000 --timeout 10000 --log-mach-verbose $*
+  MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --max-timeouts 1000 --timeout 10000 --log-mach-verbose $*
 }
 mochi() {
   clear
   _echoprompt
   echo "mochi $*"
   echo ""
-  MOZ_QUIET=1 ./mach mochitest --max-timeouts 1000 --timeout 10000 --log-mach-verbose $* | node ~/scripts/mochitest-formatter
+  # MOZ_QUIET=1 ./mach mochitest --max-timeouts 1000 --timeout 10000 --log-mach-verbose $* | node ~/scripts/mochitest-formatter
+  MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --log-mach-verbose $* | node ~/scripts/mochitest-formatter
+  # MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --log-focused=- $*
 }
 xpc() {
   clear
   _echoprompt
   echo "./mach xpcshell-test $*"
   echo ""
-  MOZ_QUIET=1 ./mach xcpshell-test $*
+  MOZ_QUIET=1 ./mach xpcshell-test $*
 }
 
 alias mr="mach run"
@@ -96,6 +100,10 @@ mr-contentcache() {
 
 treeherder-log() {
   curl -s --compressed $1 | node ~/scripts/mochitest-formatter/from-treeherder-log.js
+}
+
+treeherder-compare() {
+  ~/scripts/tree-compare/index.js $@
 }
 
 perf-html-blame() {
@@ -192,7 +200,14 @@ mozup() {
 test-translations() {
   mochi --headless \
     toolkit/components/translations/tests \
-    browser/components/translations/tests
+    browser/components/translations/tests \
+    toolkit/components/ml/tests
+
+  # ./mach mochitest --headless --log-focused=- \
+  #   toolkit/components/translations/tests \
+  #   browser/components/translations/tests \
+  #   toolkit/components/ml/tests
+
 }
 
 test-profiler() {
@@ -273,7 +288,74 @@ mr-fxt() {
     $*
 }
 
+mr-verify() {
+  ./mach run \
+    --temp-profile \
+    `# General prefs:` \
+    --setpref 'browser.warnOnQuitShortcut=false' \
+    `# Enable logging:` \
+    --setpref 'browser.translations.logLevel=All' \
+    `# Auto-translate spanish:` \
+    --setpref 'browser.translations.alwaysTranslateLanguages=es' \
+    `# Load a site for translations` \
+    --new-tab https://elpais.com/ciencia \
+    `# Use the preview bucket:` \
+    `# Keep up to date with: https://github.com/mozilla-extensions/remote-settings-devtools/blob/master/extension/experiments/remotesettings/api.js:` \
+    --setpref "services.settings.preview_enabled=true"
+}
+
+mr-verify2() {
+  ./mach run \
+    --temp-profile \
+    `# General prefs:` \
+    --setpref 'browser.warnOnQuitShortcut=false' \
+    `# Enable logging:` \
+    --setpref 'browser.translations.logLevel=Info' \
+    `# Auto-translate spanish:` \
+    --setpref 'browser.translations.alwaysTranslateLanguages=es' \
+    `# Load a site for translations` \
+    --new-tab https://elpais.com/ciencia
+}
+
+mr-ml() {
+  PROFILE=~/firefox-profile/ml
+  echo "Using profile $PROFILE"
+  echo ""
+
+  ./mach run \
+    --profile $PROFILE \
+    -- \
+    `#--new-tab https://gregtatum.com` \
+    $*
+}
+
 try-translations() {
-  mach try fuzzy --query test-linux1804-64-qr/opt-mochitest-browser-chrome-spi-nw
-  # mach try fuzzy browser/components/translations/tests toolkit/components/translations/tests
+  mach try fuzzy \
+    --full --push-to-lando \
+    --query "'test-linux1804-64-qr 'mochitest-browser-chrome-spi-nw" \
+    --query "'x86_64-qr/opt-geckoview-junit-fis | 'x86_64-qr/debug-geckoview-junit-fis gv-junit-fis"
+}
+
+clean-logs() {
+  # 0:05.09 INFO Entering test bound test_translations_engine_destroy_pending
+  # ^^^^^^^^
+  sed -i .bak -E 's/ ?[0-9]:[0-9]+\.[0-9]+ //g' $*
+
+  # 0:05.41 GECKO(42355) console.log: Translations: "Mocking RemoteSettings for the translations engine."
+  #         ^^^^^^^^^^^^
+  sed -i .bak -E 's/GECKO\([0-9]+\)/REPLACE/g' $*
+
+  # 0:05.41 GECKO(42355) console.log: Translations: "Mocking RemoteSettings for the translations engine."
+  #         ^^^^^^^^^^^^
+  sed -i .bak -E 's/GECKO\([0-9]+\)/REPLACE/g' $*
+
+  #  Remote language models loaded in 0.001 seconds."
+  #                                   ^^^^^^^^^^^^^
+  sed -i .bak -E 's/[0-9]+\.[0-9]+ seconds/NNN seconds/g' $*
+
+  cat $*
+}
+
+fxt-test() {
+  PYTHONPATH=/Users/greg/dev/fxt-training poetry run pytest -vv -W ignore $*
 }

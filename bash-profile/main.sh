@@ -3,12 +3,9 @@
 # https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# I should probably upgrade at some point.
-export BASH_SILENCE_DEPRECATION_WARNING=1
-
 # Increase the bash file history size
-HISTSIZE=10000000
-SAVEHIST=10000000
+export HISTSIZE=10000000
+export SAVEHIST=10000000
 setopt BANG_HIST                 # Treat the '!' character specially during expansion.
 setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
 setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.

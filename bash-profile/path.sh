@@ -20,6 +20,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   # https://github.com/emscripten-core/emsdk
   export PATH="/Users/greg/lem/emsdk:$PATH"
   export PATH="/Users/greg/lem/emsdk/upstream/emscripten:$PATH"
+
+  export PATH="/Users/greg/dev/marian-dev-browsermt/build:$PATH"
+  # Newer version of make.
+  export PATH="/opt/homebrew/opt/make/libexec/gnubin:$PATH"
 else
   export PATH=~/.local/bin:$PATH
   export PATH=~/.pyenv/bin:$PATH

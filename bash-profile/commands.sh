@@ -1,6 +1,6 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
   alias ls="gls -ahlX --color --group-directories-first"
-  alias think="ssh -i $THINK_STATION_KEY $THINK_STATION_IP"
+  alias think="ssh -i $THINK_KEY $THINK_HOST"
 else
   alias ls="ls -ahlX --color"
   alias think="Already on the 🐧"
@@ -12,7 +12,7 @@ echoprompt() {
   echo -e "\n\033[1;31m➤\033[0m $*\n"
 }
 
-alias ltst="ls -t | head -15"
+alias ltst="gls -ahlX --color -t | head -15"
 alias clear="echo -ne '\033]50;ClearScrollback\a'"
 alias showhidden="bash ~/hidden-show.sh"
 alias hidehidden="bash ~/hidden-hide.sh"
@@ -34,6 +34,7 @@ alias serve="http-server"
 alias pserve="php -S localhost:8000 router.php"
 alias edit-hosts="sudo vim /private/etc/hosts"
 alias edit-profile="code ~/scripts"
+alias edit-scripts="code ~/scripts"
 alias edit-cron="env EDITOR=vim crontab -e"
 alias nr="npm run"
 alias jest="clear && jest"
@@ -41,6 +42,16 @@ alias ytmp4="youtube-dl -f mp4"
 alias ytmp3="youtube-dl -x --audio-format mp3"
 alias folder-size="du -d 1 -h ."
 alias cargo-test-debug="node ~/scripts/rust-scripts/cargo-test-debug.js"
+alias porp="poetry run python -W ignore"
+alias por="poetry run"
+alias network-scan="nmap -sn 192.168.1.0/24 --system-dns"
+hf-clone() {
+  git clone https://huggingface.co/datasets/$*
+}
+type() {
+  builtin type $*
+  whence -f $*
+}
 find() {
   FIND \
   $* \
@@ -86,7 +97,7 @@ findinfiles() {
 }
 
 __tree=$(which tree)
-alias _tree="$__tree -L 2 -C -I 'node_modules|.git|.hg|target'"
+alias _tree="$__tree -L 2 -C -I 'node_modules|.git|.hg|target|__pycache__'"
 # Display a shallow tree of files. Pass an argument to match a specific file
 tree() {
   if [ -z "$1" ] || [ ${1:0:1} == "-" ]; then
@@ -112,6 +123,30 @@ files() {
   fi
 }
 
+rcat() {
+  curl -s $1 -o - -L
+}
+
+rhead() {
+  rcat $1 | head ${@:2} -n 40
+}
+
+
+zcat() {
+  curl -s $1 -o - -L | zstd --decompress --stdout
+}
+zhead() {
+  zcat $1 | head ${@:2} -n 40
+}
+gzcat() {
+  curl -s $1 -o - -L | gzip --decompress --stdout
+}
+gzhead() {
+  gzcat $1 | head ${@:2} -n 40
+}
+zipcat() {
+  unzip =( curl -s $1 -o - -L )
+}
 
 #--------------------------------------------------------------------
 # Shortcuts
@@ -152,4 +187,15 @@ function mdark {
     | sort --random-sort \
     | head -n 1 \
     | xargs afplay
+}
+
+alias venv-up="python -m venv venv && source venv/bin/activate"
+
+#!/bin/bash
+function tmpd {
+  d="$HOME/tmp/`date +%Y-%m-%d`"
+  if [[ ! -d "$d" ]]; then
+      mkdir "$d"
+  fi
+  echo $d
 }

@@ -36,6 +36,19 @@ pyenv() {
   pyenv $@
 }
 
+#------------------------------------------
+# Set up nvm
+export NVM_DIR="$HOME/.nvm"
+nvm() {
+  echo "Setting up nvm"
+  unset -f nvm
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  #
+  echo "Done, passing command to nvm..."
+  echo ""
+  nvm $@
+}
+
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   #---------------------------------------------

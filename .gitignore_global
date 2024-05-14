@@ -10,3 +10,8 @@ yarn-error.log
 *.cProfile
 mach-run
 __pycache__
+venv
+.venv
+
+# Temporary
+toolkit/components/translations/bergamot-translator/thirdparty/

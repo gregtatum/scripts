@@ -19,7 +19,7 @@ alias gs='git status'
 alias ga="git add"
 alias gap="git add -p"
 alias gaa="git add .; gs"
-alias gcob="git checkout -b"
+alias gswc="git switch --create"
 alias gc="git commit -m"
 alias gca="git commit --amend --no-edit; git status"
 alias gcf="git commit --fixup"
@@ -38,6 +38,11 @@ alias gd="git diff"
 alias gdf="git diff --name-only" # git diff "files"
 alias gcm="git commit -m"
 alias screwit="gaaca; gp -f --no-verify"
+
+submodule-reset() {
+  git submodule deinit -f .
+  git submodule update --init
+}
 
 # Run git absorb
 gabs() {
@@ -121,7 +126,7 @@ gstats() {
     --invert-grep \
     --grep "Vendor libwebrtc" \
     --grep "Backed out" \
-    --perl-regexp --author='^((?!(moz-wptsync-bot|Mozilla Releng Treescript|dependabot)).*)$' \
+    --perl-regexp --author='^((?!(moz-wptsync-bot|Mozilla Releng Treescript|dependabot|MickeyMoz|github-actions)).*)$' \
   | nl \
   | head --lines 100 \
   | tac
