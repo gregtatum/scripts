@@ -6,6 +6,8 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 # Increase the bash file history size
 export HISTSIZE=10000000
 export SAVEHIST=10000000
+export HISTFILE="~/.zsh_history"
+
 setopt BANG_HIST                 # Treat the '!' character specially during expansion.
 setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
 setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.

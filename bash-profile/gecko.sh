@@ -21,7 +21,7 @@ elif [ "$(hostname)" = "greg-lambda" ]; then
 else
   # ignore caffeinate for the desktop machine.
   alias mach="./mach"
-  builtin cd ~/dev/gecko
+  builtin cd ~/dev
 fi
 alias mb="mach build"
 alias mbb="mach build binaries"
