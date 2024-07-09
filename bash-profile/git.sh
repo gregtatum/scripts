@@ -122,13 +122,13 @@ gstats() {
     --summary \
     --numbered \
     --no-merges \
-    --since="Jan 01 2023" \
+    --since="Jan 01 2024" \
     --invert-grep \
     --grep "Vendor libwebrtc" \
     --grep "Backed out" \
     --perl-regexp --author='^((?!(moz-wptsync-bot|Mozilla Releng Treescript|dependabot|MickeyMoz|github-actions)).*)$' \
   | nl \
-  | head --lines 100 \
+  | head --lines 1000 \
   | tac
 }
 

@@ -30,7 +30,7 @@ alias kill-flow="pkill -f flow-bin"
 alias kill-audio="sudo killall coreaudiod"
 alias pngquant="pngquant --ext .tiny.png"
 alias ccat="pygmentize"
-alias serve="http-server"
+alias serve="http-server -c-1"
 alias pserve="php -S localhost:8000 router.php"
 alias edit-hosts="sudo vim /private/etc/hosts"
 alias edit-profile="code ~/scripts"
@@ -53,8 +53,7 @@ type() {
   whence -f $*
 }
 find() {
-  FIND \
-  $* \
+  /usr/bin/find \
   -not -path '*/.git/*' \
   -not -path '*/.hg/*' \
   -not -path '*/node_modules/*' \
@@ -62,18 +61,9 @@ find() {
   -not -path '*/obj-ff-artifact/*' \
   -not -path '*/obj-ff-debug/*' \
   -not -path '*/obj-ff-release/*' \
-  -not -path '*/thidparty/*'
+  -not -path '*/thirdparty/*' \
+  $*
 }
-alias search="find . \
-  -not -path '*/.git/*' \
-  -not -path '*/.hg/*' \
-  -not -path '*/node_modules/*' \
-  -not -path '*/target/*' \
-  -not -path '*/obj-ff-artifact/*' \
-  -not -path '*/obj-ff-debug/*' \
-  -not -path '*/obj-ff-release/*' \
-  -not -path '*/thidparty/*' \
-  -iname"
 loop() {
   while clear && $@; do :; done
 }
