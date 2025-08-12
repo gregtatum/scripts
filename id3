@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# id3tagger - Set ID3 tags on all MP3s in the current directory
+# Usage: id3tagger "Artist Name" "Album Title" "Year" ["Genre"]
+# Example: id3tagger "Pink Floyd" "The Wall" "1979" "Progressive Rock"
+
+if [[ $# -lt 3 ]]; then
+  echo "Usage: $(basename "$0") \"Artist Name\" \"Album Title\" \"Year\" [\"Genre\"]"
+  echo "Example: $(basename "$0") \"Pink Floyd\" \"The Wall\" \"1979\" \"Progressive Rock\""
+  exit 1
+fi
+
+artist="$1"
+album="$2"
+year="$3"
+genre="${4:-Other}"  # Default genre if not specified
+
+track_number=1
+
+shopt -s nullglob
+for file in *.mp3 *.MP3; do
+  filename=$(basename "$file")
+
+  if [[ "$filename" =~ ^([0-9]+)[[:space:]]*-[[:space:]]*(.*)\.[Mm][Pp]3$ ]]; then
+    track="${BASH_REMATCH[1]}"
+    title="${BASH_REMATCH[2]}"
+  else
+    track="$track_number"
+    title="${filename%.*}"
+  fi
+
+  echo "Tagging: $file"
+  id3v2 -a "$artist" -A "$album" -y "$year" -g "$genre" -T "$track" -t "$title" "$file"
+
+  ((track_number++))
+done
+
+if [[ -f cover.jpg ]]; then
+  echo "Embedding cover.jpg into all MP3s..."
+  for file in *.mp3 *.MP3; do
+    eyeD3 --add-image "cover.jpg:FRONT_COVER" "$file" > /dev/null
+  done
+else
+  echo "No cover.jpg found. Skipping artwork embedding."
+fi

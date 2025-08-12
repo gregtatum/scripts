@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+import argparse
+import random
+import sys
+
+
+def sample_stdin(rate, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    for line in sys.stdin:
+        if random.random() < 1 / rate:
+            sys.stdout.write(line)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Sample lines from stdin at a given rate."
+    )
+    parser.add_argument(
+        "--rate",
+        type=int,
+        default=10,
+        help="Sampling rate (1 in N chance of keeping a line)",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Optional random seed for reproducibility",
+    )
+
+    args = parser.parse_args()
+
+    if args.rate <= 0:
+        parser.error("Rate must be a positive integer")
+
+    sample_stdin(args.rate, args.seed)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+    echo "Usage: $0 <input_pattern> <output_pattern> [file_types]"
+    exit 1
+fi
+
+input_pattern="$1"
+output_pattern="$2"
+file_types="$3"
+
+rg_command="rg -l"
+sed_command="xargs sed -i -E"
+
+# Check if the OS is macOS
+if [ "$(uname)" == "Darwin" ]; then
+    # macOS sed syntax
+    sed_command='xargs gsed -i -E'
+fi
+
+if [ -n "$file_types" ]; then
+    IFS=',' read -ra file_types_array <<< "$file_types"
+    for type in "${file_types_array[@]}"; do
+        rg_command+=" --type $type"
+    done
+fi
+
+$rg_command "$input_pattern" | $sed_command "s/$input_pattern/$output_pattern/g"

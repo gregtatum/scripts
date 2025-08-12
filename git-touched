@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# set -x
+set -euo pipefail
+
+underline="\033[4m"
+clear="\033[0m"
+bold="\033[1m"
+
+if [[ $# -eq 0 || "$1" == "--help" ]]; then
+  echo -e ${underline}git-touched${clear}
+  echo -e
+  echo -e ${bold}List all of the commits in all of your branches that file${clear}
+  echo -e
+  echo -e - Run the basic command
+  echo -e "  git touched ${underline}path/to/file${clear}"
+  exit 1
+fi
+
+git rev-list --all -- $@ |
+  tac |
+  xargs \
+  git show \
+    --name-status \
+    --date=short \
+    --pretty=format:'%C(yellow)%h %C(red)%ad %C(magenta)%an%C(green)%d %C(reset)%s'

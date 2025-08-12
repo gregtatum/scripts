@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+import subprocess
+import argparse
+import os
+
+
+def run_gsutil_ls(bucket_path):
+    """Runs `gsutil ls -R` and captures the output."""
+    try:
+        result = subprocess.run(
+            ["gsutil", "ls", "-R", bucket_path],
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+        return result.stdout.splitlines()
+    except subprocess.CalledProcessError as e:
+        print(f"Error running gsutil: {e}")
+        exit(1)
+
+
+def build_tree_structure(lines, base_path):
+    """Constructs a nested dictionary representing the folder structure."""
+    tree = {}
+    current_dir = tree
+    path_stack = []  # Stores current path levels
+
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+
+        if line.endswith(":"):  # Directory marker
+            dir_path = line[:-1]  # Remove trailing ':'
+            rel_path = dir_path.replace(base_path, "").strip("/")
+
+            # Create nested dictionary structure
+            parts = rel_path.split("/")
+            current_dir = tree
+            for part in parts:
+                current_dir = current_dir.setdefault(part, {})
+
+            path_stack = parts  # Track current directory
+        else:  # It's a file
+            file_path = line.replace(base_path, "").strip("/")
+            parts = file_path.split("/")
+            current_dir = tree
+
+            # Traverse to the correct folder
+            for part in parts[:-1]:
+                current_dir = current_dir.setdefault(part, {})
+
+            current_dir[parts[-1]] = None  # Add file
+
+    return tree
+
+
+def print_tree(tree, prefix="", depth=0, max_depth=None):
+    """Recursively prints the tree structure with depth constraint."""
+    if max_depth is not None and depth >= max_depth:
+        # if tree:  # Show ellipsis if there are more files/folders
+        #     print(prefix + "└── ...")
+        return
+
+    keys = sorted(tree.keys())
+    for i, key in enumerate(keys):
+        if not key:
+            continue
+        is_last = i == len(keys) - 1
+        connector = "└── " if is_last else "├── "
+        print(prefix + connector + key)
+        if isinstance(tree[key], dict):  # It's a directory
+            extension = "    " if is_last else "│   "
+            print_tree(tree[key], prefix + extension, depth + 1, max_depth)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="A CLI utility to list Google Cloud Storage buckets in a tree-like format."
+    )
+    parser.add_argument("path", help="GCS path (e.g., gs://bucket-name/dir/)")
+    parser.add_argument(
+        "-D",
+        "--depth",
+        type=int,
+        default=None,
+        help="Limit the depth of the tree output (default: no limit).",
+    )
+    args = parser.parse_args()
+
+    base_path = args.path.rstrip("/")
+    lines = run_gsutil_ls(base_path)
+    tree = build_tree_structure(lines, base_path)
+
+    print(base_path)
+    print_tree(tree, max_depth=args.depth)
+
+
+if __name__ == "__main__":
+    main()

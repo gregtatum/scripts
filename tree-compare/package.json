@@ -1,0 +1,12 @@
+{
+  "name": "treeherder-compare",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Greg Tatum",
+  "type": "module",
+  "start": "node index.js",
+  "dependencies": {
+    "argparse": "^2.0.1",
+    "tempfile": "^5.0.0"
+  }
+}

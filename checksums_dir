@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+
+def sha1sum(path: Path) -> str:
+    h = hashlib.sha1()
+    with path.open("rb") as f:
+        while chunk := f.read(8192):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generate a pretty-printed checksums.json file in each given directory."
+    )
+    parser.add_argument(
+        "directories",
+        metavar="DIR",
+        type=Path,
+        nargs="+",
+        help="Directory in which to compute checksums",
+    )
+    args = parser.parse_args()
+
+    for directory in args.directories:
+        if not directory.is_dir():
+            print(f"Skipping {directory}: not a directory")
+            continue
+
+        print(f"\n{directory}")
+        files = sorted(
+            p for p in directory.glob("*") if p.is_file() and p.name != "checksums.json"
+        )
+
+        # Calculate padding
+        size_width = max((len(str(p.stat().st_size)) for p in files), default=0)
+        print("hash       bytes")
+        print("========== =====")
+        for p in files:
+            hash_prefix = sha1sum(p)[:10]
+            size = p.stat().st_size
+            print(f"{hash_prefix}  {str(size).rjust(size_width)}  {p.name}")
+
+
+if __name__ == "__main__":
+    main()
