@@ -1,3 +1,25 @@
+export MOZILLA_TRANSLATIONS_PATH="/Users/greg/dev/translations"
+
+# Pick the latest JDK you can find after sorting it.
+# export JAVA_HOME="$(LS -1dr -- $HOME/.mozbuild/jdk/jdk-* | head -n 1)/Contents/Home"
+# export ANDROID_SDK_ROOT="$HOME/.mozbuild/android-sdk-macosx"
+# Pick the latest NDK you can find after sorting it.
+# export ANDROID_NDK_HOME=`ls -1dr -- $HOME/.mozbuild/android-ndk-* | head -n 1`
+
+
+# ANDROID_STUDIO="/Applications/Android\ Studio.app/Contents/MacOS/studio"
+# alias android-studio="$ANDROID_STUDIO"
+# if [ ! -d "$JAVA_HOME" ]; then
+#   echo "Warning: JAVA_HOME does not exist at $JAVA_HOME"
+# fi
+# if [ ! -d "$ANDROID_SDK_ROOT" ]; then
+#   echo "Warning: ANDROID_SDK_ROOT does not exist at $ANDROID_SDK_ROOT"
+# fi
+# if [ ! -d "$ANDROID_NDK_HOME" ]; then
+#   echo "Warning: ANDROID_NDK_HOME does not exist at $ANDROID_NDK_HOME"
+# fi
+
+
 revs() {
   # List all current things in my review queue
   node ~/scripts/my-reviews/phab "$HOME/dev/gecko" 'PHID-USER-hch2p624jejt4kddoqow'
@@ -46,10 +68,23 @@ mochii() {
 mochi() {
   clear
   _echoprompt
-  echo "mochi $*"
-  echo ""
+
+  # Echo out the command in a readable format.
+  echo "mochi \\"
+  last_index=$(($# - 1))
+  index=0
+
+  for arg in "$@"; do
+      if [ "$index" -eq "$last_index" ]; then
+          echo "    $arg"
+      else
+          echo "    $arg \\"
+      fi
+      index=$((index + 1))
+  done
+
   # MOZ_QUIET=1 ./mach mochitest --max-timeouts 1000 --timeout 10000 --log-mach-verbose $* | node ~/scripts/mochitest-formatter
-  MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --log-mach-verbose $* | node ~/scripts/mochitest-formatter
+  MOZ_QUIET=1 ./mach mochitest --headless --setpref=remote.log.level=Error --log-mach-verbose $* | node ~/scripts/mochitest-formatter
   # MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --log-focused=- $*
 }
 xpc() {
@@ -75,7 +110,6 @@ alias build-art-debug="change_mozconfig artifact-debug"
 alias build-debug="change_mozconfig debug"
 alias build-android="change_mozconfig android"
 alias ph="moz-phab"
-alias ph-stack="moz-phab submit main HEAD"
 
 try() {
   echo "DevTools:"
@@ -198,16 +232,25 @@ mozup() {
 }
 
 test-translations() {
-  mochi --headless \
-    toolkit/components/translations/tests \
-    browser/components/translations/tests \
-    toolkit/components/ml/tests
+  mochi \
+    $(find toolkit/components/translations/tests -type f -name "browser_*.js") \
+    $(find browser/components/translations/tests -type f -name "browser_*.js" \
+      ! -path "browser/components/translations/tests/browser/browser_translations_perf_*" \
+      ! -path "browser/components/translations/tests/browser/browser_translations_e2e_*" \
+      ! -path "browser/components/translations/tests/browser/browser_translations_select_*" \
+    )
+}
 
-  # ./mach mochitest --headless --log-focused=- \
-  #   toolkit/components/translations/tests \
-  #   browser/components/translations/tests \
-  #   toolkit/components/ml/tests
-
+test-translations-full() {
+  mochi \
+    $(find toolkit/components/translations/tests -type f -name "browser_*.js") \
+    $(find browser/components/translations/tests -type f -name "browser_*.js" \
+      ! -path "browser/components/translations/tests/browser/browser_translations_perf_*" \
+      ! -path "browser/components/translations/tests/browser/browser_translations_e2e_*" \
+    ) \
+    $(find toolkit/components/ml/tests -type f -name "browser_*.js" \
+      ! -path toolkit/components/ml/tests/browser/browser_ml_end_to_end.js \
+    )
 }
 
 test-profiler() {
@@ -327,6 +370,12 @@ mr-ml() {
     -- \
     `#--new-tab https://gregtatum.com` \
     $*
+}
+
+try-mochi() {
+  mach try fuzzy \
+    --push-to-lando \
+    --query "'test-linux1804-64-qr/debug-mochitest-browser-chrome-spi-nw"
 }
 
 try-translations() {

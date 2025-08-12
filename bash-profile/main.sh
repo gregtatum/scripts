@@ -27,6 +27,8 @@ export EDITOR="vim"
 export CCACHE_COMPRESS=""
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
+# Normally this is '%', which shows when some output doesn't end with a newline.
+export PROMPT_EOL_MARK=''
 
 # Setup autocomplete before compinit
 zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash

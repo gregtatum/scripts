@@ -16,6 +16,9 @@ gitfindbranch() {
 #git aliases
 alias g="git"
 alias gs='git status'
+alias gst='git stash'
+alias gsp='git stash push --include-untracked'
+alias gspp='git stash push -p'
 alias ga="git add"
 alias gap="git add -p"
 alias gaa="git add .; gs"
@@ -28,9 +31,11 @@ alias gcpc="git cherry-pick --continue"
 alias grvi="git revise -i"
 alias grvim="git revise -i main"
 alias gri="git rebase -i"
-alias grim="git rebase -i main"
-alias grc="git rebase --continue"
+alias grim="git rebase -i main; git stat"
+alias grc="git rebase --continue; git status"
 alias gra="git rebase --abort"
+alias grk="git reset --keep"
+alias grs="git reset --soft"
 alias gp="git push"
 alias gr="git remote -v"
 alias gl="git oneline"
@@ -38,6 +43,7 @@ alias gd="git diff"
 alias gdf="git diff --name-only" # git diff "files"
 alias gcm="git commit -m"
 alias screwit="gaaca; gp -f --no-verify"
+alias grelock="g restore -s HEAD poetry.lock && poetry lock && g add poetry.lock && gs"
 
 submodule-reset() {
   git submodule deinit -f .
@@ -55,6 +61,7 @@ gabs() {
 
 alias pr="gh pr"
 alias gdh="git diff HEAD"
+alias gdn="git diff --no-index"
 gaaca() {
   git add .
   gca $@
@@ -81,7 +88,7 @@ gnot() {
 firstpush() {
   branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
   echo "git push -u gregtatum $branch"
-  git push -u gregtatum $branch $@ && gh browse
+  git push -u gregtatum $branch $@
 }
 
 git_branch() {

@@ -12,6 +12,8 @@ mach-run
 __pycache__
 venv
 .venv
+.kotlin
 
 # Temporary
 toolkit/components/translations/bergamot-translator/thirdparty/
+/Users/greg/dev/OpusTrainer/data

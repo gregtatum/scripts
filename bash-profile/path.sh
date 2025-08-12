@@ -24,6 +24,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH="/Users/greg/dev/marian-dev-browsermt/build:$PATH"
   # Newer version of make.
   export PATH="/opt/homebrew/opt/make/libexec/gnubin:$PATH"
+  export PATH="/Users/greg/.mozbuild/android-sdk-macosx/platform-tools:$PATH"
 else
   export PATH=~/.local/bin:$PATH
   export PATH=~/.pyenv/bin:$PATH
