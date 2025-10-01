@@ -56,8 +56,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export RUST_SRC_PATH=`brew --prefix`/Cellar/rust/src/src
 
   #---------------------------------------------
-  # Setup npm
-  source ~/.bash_npm_completion
 
   #--------------------------------------------------------------
   # Lazy load nvm - https://blog.yo1.dog/better-nvm-lazy-loading/

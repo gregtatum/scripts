@@ -22,7 +22,7 @@ export MOZILLA_TRANSLATIONS_PATH="/Users/greg/dev/translations"
 
 revs() {
   # List all current things in my review queue
-  node ~/scripts/my-reviews/phab "$HOME/dev/gecko" 'PHID-USER-hch2p624jejt4kddoqow'
+  node ~/scripts/my-reviews/phab "$HOME/dev/firefox" 'PHID-USER-hch2p624jejt4kddoqow'
   # node ~/scripts/my-reviews/github 'unicode-org' 'icu4x' 'gregtatum'
   node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler' 'gregtatum'
   # node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler-server' 'gregtatum'
@@ -365,7 +365,20 @@ mr-ml() {
   echo "Using profile $PROFILE"
   echo ""
 
-  ./mach run \
+  MOZ_ALLOW_EXTERNAL_ML_HUB=1 ./mach run \
+    --profile $PROFILE \
+    -- \
+    `#--new-tab https://gregtatum.com` \
+    $*
+}
+
+mr-ai() {
+  # For the smartwindow project
+  PROFILE=~/firefox-profile/ai
+  echo "Using profile $PROFILE"
+  echo ""
+
+  MOZ_ALLOW_EXTERNAL_ML_HUB=1 ./mach run \
     --profile $PROFILE \
     -- \
     `#--new-tab https://gregtatum.com` \

@@ -42,6 +42,7 @@ alias gl="git oneline"
 alias gd="git diff"
 alias gdf="git diff --name-only" # git diff "files"
 alias gcm="git commit -m"
+alias gcmm='git commit -m "$(commitline)"'
 alias screwit="gaaca; gp -f --no-verify"
 alias grelock="g restore -s HEAD poetry.lock && poetry lock && g add poetry.lock && gs"
 
