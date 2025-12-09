@@ -171,7 +171,14 @@ let overallSummary = false;
         if (/\d+:\d+\.\d+ GECKO\(\d+\) JavaScript error: /.test(line)) {
           // " 0:12.37 GECKO(28885) JavaScript error: , line 0: TypeError: can't access dead object"
           const regex = /\d+:\d+\.\d+ GECKO\(\d+\) JavaScript error:\w*(.*)/;
-          return outputCapture("   JS Error: ", regex, ERROR_COLOR, DIM_COLOR);
+          return outputCapture(
+            "   JS Error: ",
+            regex,
+            line.toLowerCase().includes("intentional")
+              ? INFO_COLOR
+              : ERROR_COLOR,
+            DIM_COLOR
+          );
         }
 
         if (
@@ -179,7 +186,14 @@ let overallSummary = false;
         ) {
           // " 0:06.42 INFO Console message: [JavaScript Error: "TypeError: can't access property "isOpenIn", panelView is undefined" {file: "resource:///modules/PanelMultiView.jsm" line: 894}]"
           const regex = /\[JavaScript Error: (.*)\]/;
-          return outputCapture("   JS Error: ", regex, ERROR_COLOR, DIM_COLOR);
+          return outputCapture(
+            "   JS Error: ",
+            regex,
+            line.toLowerCase().includes("intentional")
+              ? INFO_COLOR
+              : ERROR_COLOR,
+            DIM_COLOR
+          );
         }
 
         if (/\d+:\d+\.\d+ GECKO\(\d+\) console\.log: /.test(line)) {

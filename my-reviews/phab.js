@@ -106,6 +106,11 @@ function printRevision(revision /* :Revision */) {
 
 function printBug(revision /* :Revision */) {
   const bugId = revision.fields["bugzilla.bug-id"];
+  if (!bugId) {
+    const bugLabel = color.yellow(`No Bug`);
+    console.log(`\n${bugLabel}\n`);
+    return;
+  }
   const bugLabel = color.yellow(`Bug ${bugId}`);
   const url = color.blue.underline(
     `https://bugzilla.mozilla.org/show_bug.cgi?id=${bugId}`
@@ -116,7 +121,7 @@ function printBug(revision /* :Revision */) {
 function printRevisionList(revisions /* :Revision[] */) {
   let prevBug = null;
   for (const revision of revisions) {
-    const thisBug = revision.fields["bugzilla.bug-id"];
+    const thisBug = revision.fields["bugzilla.bug-id"] || "no bug";
     if (prevBug !== thisBug) {
       printBug(revision);
     }
@@ -179,9 +184,9 @@ function printHeader(text /* :string */) {
       if (!title) {
         return true;
       }
-      if (!revision.fields["bugzilla.bug-id"]) {
-        return false;
-      }
+      // if (!revision.fields["bugzilla.bug-id"]) {
+      //   return false;
+      // }
       return !title.match(/\bWIP\b/);
     })
   );

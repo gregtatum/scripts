@@ -1,5 +1,8 @@
 # Setup programming environments
 
+# Increase the cache size to 20G.
+export SCCACHE_CACHE_SIZE="20G"
+
 #--------------------------------------------------------------
 # Work around glean issues where python doesn't know my locale.
 # e.g.

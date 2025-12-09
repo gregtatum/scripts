@@ -1,4 +1,6 @@
 export MOZILLA_TRANSLATIONS_PATH="/Users/greg/dev/translations"
+# For e2e translations tests in Firefox.
+export MOZ_FETCHES_DIR="/Users/greg/.mozfetches"
 
 # Pick the latest JDK you can find after sorting it.
 # export JAVA_HOME="$(LS -1dr -- $HOME/.mozbuild/jdk/jdk-* | head -n 1)/Contents/Home"
@@ -22,15 +24,15 @@ export MOZILLA_TRANSLATIONS_PATH="/Users/greg/dev/translations"
 
 revs() {
   # List all current things in my review queue
-  node ~/scripts/my-reviews/phab "$HOME/dev/firefox" 'PHID-USER-hch2p624jejt4kddoqow'
-  # node ~/scripts/my-reviews/github 'unicode-org' 'icu4x' 'gregtatum'
-  node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler' 'gregtatum'
-  # node ~/scripts/my-reviews/github 'firefox-devtools' 'profiler-server' 'gregtatum'
-  # node ~/scripts/my-reviews/github 'mozilla' 'treeherder' 'gregtatum'
-  node ~/scripts/my-reviews/github 'projectfluent' 'fluent.js' 'gregtatum'
-  node ~/scripts/my-reviews/github 'projectfluent' 'fluent-rs' 'gregtatum'
-  node ~/scripts/my-reviews/github 'mozilla' 'firefox-translations-training' 'gregtatum'
-  node ~/scripts/my-reviews/github 'mozilla' 'firefox-translations-models' 'gregtatum'
+  my-reviews phabricator "$HOME/dev/firefox" 'PHID-USER-hch2p624jejt4kddoqow'
+  # my-reviews github 'unicode-org' 'icu4x' 'gregtatum'
+  my-reviews github 'firefox-devtools' 'profiler' 'gregtatum'
+  # my-reviews github 'firefox-devtools' 'profiler-server' 'gregtatum'
+  # my-reviews github 'mozilla' 'treeherder' 'gregtatum'
+  my-reviews github 'projectfluent' 'fluent.js' 'gregtatum'
+  my-reviews github 'projectfluent' 'fluent-rs' 'gregtatum'
+  my-reviews github 'mozilla' 'firefox-translations-training' 'gregtatum'
+  my-reviews github 'mozilla' 'firefox-translations-models' 'gregtatum'
 }
 
 export MACH_NOTIFY_MINTIME=0 # Make mach notify every time
@@ -63,7 +65,7 @@ mochii() {
   _echoprompt
   echo "mochii $*"
   echo ""
-  MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --max-timeouts 1000 --timeout 10000 --log-mach-verbose $*
+  MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --log-mach-verbose $*
 }
 mochi() {
   clear
@@ -87,6 +89,9 @@ mochi() {
   MOZ_QUIET=1 ./mach mochitest --headless --setpref=remote.log.level=Error --log-mach-verbose $* | node ~/scripts/mochitest-formatter
   # MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --log-focused=- $*
 }
+mochj() {
+  mochii --jsdebugger --timeout 100000 $*
+}
 xpc() {
   clear
   _echoprompt
@@ -94,6 +99,7 @@ xpc() {
   echo ""
   MOZ_QUIET=1 ./mach xpcshell-test $*
 }
+alias ml-perftest="MOZ_ML_LOCAL_DIR=~/ml-fetches ./mach perftest --hooks toolkit/components/ml/tests/tools/hooks_local_hub.py"
 
 alias mr="mach run"
 alias mbfr="mbf && mr"
@@ -229,6 +235,15 @@ mozup() {
   echo "➤ Running mach build"
   echo ""
   mb
+}
+
+test-ml() {
+  # Example perf file:
+  # toolkit/components/ml/tests/browser/browser_ml_engine_multi_perf.js
+  mochi \
+    $(find toolkit/components/ml/tests -type f -name "browser_*.js" \
+      ! -path "toolkit/components/ml/tests/browser/browser_*_perf*"
+    )
 }
 
 test-translations() {
@@ -389,6 +404,13 @@ try-mochi() {
   mach try fuzzy \
     --push-to-lando \
     --query "'test-linux1804-64-qr/debug-mochitest-browser-chrome-spi-nw"
+}
+
+try-translations() {
+  mach try fuzzy \
+    --full --push-to-lando \
+    --query "'test-linux1804-64-qr 'mochitest-browser-chrome-spi-nw" \
+    --query "'x86_64-qr/opt-geckoview-junit-fis | 'x86_64-qr/debug-geckoview-junit-fis gv-junit-fis"
 }
 
 try-translations() {

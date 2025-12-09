@@ -1,3 +1,6 @@
+[user]
+    name = Greg Tatum
+    email = tatum.creative@gmail.com
 [core]
   excludesfile = ~/scripts/.gitignore_global
   editor = vim
@@ -24,7 +27,7 @@
   r = remote -vv
   ls = log --graph --abbrev-commit --decorate --all --date=short --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ad%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
   # oneline = log --pretty=oneline -n 20 --first-parent
-  oneline = log --pretty=format:'%C(yellow)%h %C(red)%ad %C(magenta)%an%C(green)%d %C(reset)%s' --date=short -n 40 --first-parent
+  oneline = log --pretty=format:'%C(yellow)%h %C(red)%ad %C(magenta)%an%C(green)%d %C(reset)%s' --date=short -n 30 --first-parent
   me = !"git ls --author 'Greg Tatum'"
   pr = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
   pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
@@ -63,3 +66,10 @@
   detachedHead = false
 [gc]
   pruneexpire = "180 days"
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[rebase]
+	autosquash = true

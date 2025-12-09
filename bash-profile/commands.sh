@@ -192,8 +192,6 @@ function mdark {
     | xargs afplay
 }
 
-alias venv-up="python -m venv venv && source venv/bin/activate"
-
 #!/bin/bash
 function tmpd {
   d="$HOME/tmp/`date +%Y-%m-%d`"
@@ -317,4 +315,42 @@ _awaken_cleanup() {
     wait $CAFFEINATE_PID 2>/dev/null
   fi
   exit 0
+}
+
+alias venv-up="python -m venv .venv && source .venv/bin/activate"
+
+venv-register() {
+  # Detect current Python executable (must be from an active venv)
+  local py=$(which python)
+
+  if [[ $py == /opt/homebrew/* ]]; then
+    echo "❌ Detected system Python (${py})"
+    echo "   Please activate your virtual environment first."
+    return 1
+  fi
+
+  if [[ -z "$VIRTUAL_ENV" ]]; then
+    echo "❌ No virtual environment detected. Activate one first."
+    return 1
+  fi
+
+  # Get project name from current directory
+  local project_name=$(basename "$(pwd)")
+
+  # Get Python version, e.g. 3.11.13
+  local version=$($py -c "import sys; print('.'.join(map(str, sys.version_info[:3])))")
+
+  # Normalize name for kernel
+  local name="${project_name}_py_${version//./_}"
+
+  # Create human-readable display name
+  local display="${project_name} v${version} (venv)"
+
+  echo "🧩 Registering kernel:"
+  echo "  Name: ${name}"
+  echo "  Display Name: ${display}"
+  echo "  Python: $py"
+  echo
+
+  "$py" -m ipykernel install --user --name "$name" --display-name "$display"
 }
