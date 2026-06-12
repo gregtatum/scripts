@@ -1,0 +1,15 @@
+{
+  "name": "git-shift",
+  "version": "0.1.0",
+  "description": "Review and rewrite Git commit timestamps with simple time selection rules.",
+  "type": "module",
+  "bin": {
+    "git-shift": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
