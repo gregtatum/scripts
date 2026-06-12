@@ -59,7 +59,27 @@ async function main() {
   }
 
   const backupRef = applyShiftPlan(range, plan);
-  console.log(color.green(`Rewritten successfully. Backup ref: ${backupRef}`));
+  printRewriteSuccess(backupRef);
+}
+
+/**
+ * @param {string} backupRef
+ */
+function printRewriteSuccess(backupRef) {
+  console.log();
+  console.log(color.green("Rewritten successfully."));
+  console.log();
+  console.log("Backup ref:");
+  console.log(`  ${backupRef}`);
+  console.log();
+  console.log("Inspect the old history:");
+  console.log(`  git log --oneline ${backupRef}`);
+  console.log();
+  console.log("Compare old vs rewritten history:");
+  console.log(`  git range-diff ${backupRef} HEAD`);
+  console.log();
+  console.log("Restore the branch to the backup:");
+  console.log(`  git reset --hard ${backupRef}`);
 }
 
 main().catch(error => {

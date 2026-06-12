@@ -35,6 +35,7 @@ fi
 
 export PATH=~/.cargo/bin:$PATH
 export PATH=~/scripts:$PATH
+export PATH=~/scripts/git-shift/bin:$PATH
 export PATH=~/scripts/moz-git-tools:$PATH
 export PATH=~/scripts/version-control-tools/git/commands:$PATH
 export PATH=./node_modules/.bin:$PATH
