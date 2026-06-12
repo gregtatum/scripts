@@ -15,6 +15,8 @@ gitfindbranch() {
 }
 #git aliases
 alias g="git"
+# Disable fancy diffs
+alias gitt="git -c core.pager=cat"
 alias gs='git status'
 alias gst='git stash'
 alias gsp='git stash push --include-untracked'
@@ -46,6 +48,22 @@ alias gcmm='git commit -m "$(commitline)"'
 alias screwit="gaaca; gp -f --no-verify"
 alias grelock="g restore -s HEAD poetry.lock && poetry lock && g add poetry.lock && gs"
 
+toggle-ss() {
+  local feature="+side-by-side"
+
+  if [[ " ${DELTA_FEATURES:-} " == *" ${feature} "* ]]; then
+    # Remove the feature
+    DELTA_FEATURES="$(printf '%s\n' "$DELTA_FEATURES" | sed -E "s/(^| )${feature}( |$)/ /g" | xargs)"
+    export DELTA_FEATURES
+    echo "delta: side-by-side disabled"
+  else
+    # Add the feature
+    DELTA_FEATURES="$(xargs <<<"${DELTA_FEATURES:-} $feature")"
+    export DELTA_FEATURES
+    echo "delta: side-by-side enabled"
+  fi
+}
+
 submodule-reset() {
   git submodule deinit -f .
   git submodule update --init
@@ -63,6 +81,16 @@ gabs() {
 alias pr="gh pr"
 alias gdh="git diff HEAD"
 alias gdn="git diff --no-index"
+cgd() {
+  printf '\033[3J\033[H\033[2J' # clear screen
+  gd $@
+  echo "\n➤ git diff --stat $@\n"
+  gd --stat $@
+}
+cgdh() {
+  cgd head
+}
+
 gaaca() {
   git add .
   gca $@
@@ -134,7 +162,7 @@ gstats() {
     --invert-grep \
     --grep "Vendor libwebrtc" \
     --grep "Backed out" \
-    --perl-regexp --author='^((?!(moz-wptsync-bot|Mozilla Releng Treescript|dependabot|MickeyMoz|github-actions)).*)$' \
+    --perl-regexp --author='^((?!(moz-wptsync-bot|Mozilla Releng Treescript|dependabot|MickeyMoz|github-actions|Release Engineering Landoscript)).*)$' \
   | nl \
   | head --lines 1000 \
   | tac

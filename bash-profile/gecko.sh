@@ -21,19 +21,23 @@ export MOZ_FETCHES_DIR="/Users/greg/.mozfetches"
 #   echo "Warning: ANDROID_NDK_HOME does not exist at $ANDROID_NDK_HOME"
 # fi
 
+alias revs="my-reviews"
 
-revs() {
-  # List all current things in my review queue
-  my-reviews phabricator "$HOME/dev/firefox" 'PHID-USER-hch2p624jejt4kddoqow'
-  # my-reviews github 'unicode-org' 'icu4x' 'gregtatum'
-  my-reviews github 'firefox-devtools' 'profiler' 'gregtatum'
-  # my-reviews github 'firefox-devtools' 'profiler-server' 'gregtatum'
-  # my-reviews github 'mozilla' 'treeherder' 'gregtatum'
-  my-reviews github 'projectfluent' 'fluent.js' 'gregtatum'
-  my-reviews github 'projectfluent' 'fluent-rs' 'gregtatum'
-  my-reviews github 'mozilla' 'firefox-translations-training' 'gregtatum'
-  my-reviews github 'mozilla' 'firefox-translations-models' 'gregtatum'
-}
+alias moz-bugs="node ~/dev/moz-bugs/bin/moz-bugs.mjs"
+alias bugs="node ~/dev/moz-bugs/bin/moz-bugs.mjs"
+
+# revs() {
+#   # List all current things in my review queue
+#   my-reviews phabricator "$HOME/dev/firefox" 'PHID-USER-hch2p624jejt4kddoqow'
+#   # my-reviews github 'unicode-org' 'icu4x' 'gregtatum'
+#   my-reviews github 'firefox-devtools' 'profiler' 'gregtatum'
+#   # my-reviews github 'firefox-devtools' 'profiler-server' 'gregtatum'
+#   # my-reviews github 'mozilla' 'treeherder' 'gregtatum'
+#   my-reviews github 'projectfluent' 'fluent.js' 'gregtatum'
+#   my-reviews github 'projectfluent' 'fluent-rs' 'gregtatum'
+#   my-reviews github 'mozilla' 'firefox-translations-training' 'gregtatum'
+#   my-reviews github 'mozilla' 'firefox-translations-models' 'gregtatum'
+# }
 
 export MACH_NOTIFY_MINTIME=0 # Make mach notify every time
 
@@ -70,25 +74,32 @@ mochii() {
 mochi() {
   clear
   _echoprompt
-
-  # Echo out the command in a readable format.
-  echo "mochi \\"
-  last_index=$(($# - 1))
-  index=0
-
-  for arg in "$@"; do
-      if [ "$index" -eq "$last_index" ]; then
-          echo "    $arg"
-      else
-          echo "    $arg \\"
-      fi
-      index=$((index + 1))
-  done
-
-  # MOZ_QUIET=1 ./mach mochitest --max-timeouts 1000 --timeout 10000 --log-mach-verbose $* | node ~/scripts/mochitest-formatter
-  MOZ_QUIET=1 ./mach mochitest --headless --setpref=remote.log.level=Error --log-mach-verbose $* | node ~/scripts/mochitest-formatter
-  # MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --log-focused=- $*
+  echo "mochii $*"
+  echo ""
+  MOZ_QUIET=1 ./mach mochitest --headless --setpref=remote.log.level=Error --log-mach-verbose $*
 }
+# mochi() {
+#   clear
+#   _echoprompt
+
+#   # Echo out the command in a readable format.
+#   echo "mochi \\"
+#   last_index=$(($# - 1))
+#   index=0
+
+#   for arg in "$@"; do
+#       if [ "$index" -eq "$last_index" ]; then
+#           echo "    $arg"
+#       else
+#           echo "    $arg \\"
+#       fi
+#       index=$((index + 1))
+#   done
+
+#   # MOZ_QUIET=1 ./mach mochitest --max-timeouts 1000 --timeout 10000 --log-mach-verbose $* | node ~/scripts/mochitest-formatter
+#   MOZ_QUIET=1 ./mach mochitest --headless --setpref=remote.log.level=Error --log-mach-verbose $* | node ~/scripts/mochitest-formatter
+#   # MOZ_QUIET=1 ./mach mochitest --setpref=remote.log.level=Error --log-focused=- $*
+# }
 mochj() {
   mochii --jsdebugger --timeout 100000 $*
 }
@@ -240,10 +251,22 @@ mozup() {
 test-ml() {
   # Example perf file:
   # toolkit/components/ml/tests/browser/browser_ml_engine_multi_perf.js
-  mochi \
+  mochii --headless \
     $(find toolkit/components/ml/tests -type f -name "browser_*.js" \
-      ! -path "toolkit/components/ml/tests/browser/browser_*_perf*"
+      ! -path "toolkit/components/ml/tests/browser/browser_*_perf*" \
+      ! -path "toolkit/components/ml/tests/browser_eval/*"
     )
+}
+
+test-sw() {
+  browser/components/aiwindow/**/tests/xpcshell -type f -name "test_*.js"
+
+  mochii --headless \
+    $(find browser/components/aiwindow/models/tests/browser -type f -name "browser_*.js") \
+    $(find browser/components/aiwindow/ui/test/browser -type f -name "browser_*.js") \
+  && \
+  xpc \
+    $(find browser/components/aiwindow/**/tests/xpcshell -type f -name "test_*.js")
 }
 
 test-translations() {
@@ -403,21 +426,19 @@ mr-ai() {
 try-mochi() {
   mach try fuzzy \
     --push-to-lando \
-    --query "'test-linux1804-64-qr/debug-mochitest-browser-chrome-spi-nw"
+    --query "'test-linux2404-64 'mochitest-browser-chrome-swr !tsan !asan !a11y"
 }
 
 try-translations() {
   mach try fuzzy \
-    --full --push-to-lando \
-    --query "'test-linux1804-64-qr 'mochitest-browser-chrome-spi-nw" \
+    --query "'test-linux2404-64 'mochitest-browser-chrome-swr !tsan !asan !a11y"
     --query "'x86_64-qr/opt-geckoview-junit-fis | 'x86_64-qr/debug-geckoview-junit-fis gv-junit-fis"
 }
 
-try-translations() {
+try-ml() {
   mach try fuzzy \
-    --full --push-to-lando \
-    --query "'test-linux1804-64-qr 'mochitest-browser-chrome-spi-nw" \
-    --query "'x86_64-qr/opt-geckoview-junit-fis | 'x86_64-qr/debug-geckoview-junit-fis gv-junit-fis"
+    --query "'perftest-windows" \
+    --query "'test-linux2404-64 'mochitest-browser-chrome-swr !tsan !asan !a11y"
 }
 
 clean-logs() {

@@ -1,10 +1,59 @@
+# ┌──────────────────────────────────────────────────────────────────────────────────────┐
+# │ Diff configuration for: https://github.com/dandavison/delta
+[interactive]
+  diffFilter = delta --color-only
+[merge]
+  conflictStyle = zdiff3
+[core]
+  pager = delta
+[delta]
+  navigate = true
+  line-numbers = true
+  hyperlinks = true
+  hyperlinks-file-link-format = "vscode://file/{path}:{line}"
+  pager = cat
+[diff]
+  # https://dandavison.github.io/delta/color-moved-support.html
+  colorMoved = default # Add color for moved files
+	context = 10
+
+  # Use a different theme:
+  # features = "collared-trogon"
+  # features = "colibri"
+  # features = "collared-trogon"
+  # features = "coracias-caudatus"
+  # features = "hoopoe"
+  # features = "tangara-chilensis"
+  # features = "villsau"
+  # features = "woolly-mammoth"
+  # features = "calochortus-lyallii"
+  # features = "mantis-shrimp"
+  # features = "mantis-shrimp-lite"
+  # features = "zebra-dark"
+  # features = "zebra-light"
+  # features = "chameleon"
+  # features = "gruvmax-fang"
+  # features = "discord"
+  # features = "mellow-barbet"
+  # features = "arctic-fox"
+  # features = "corvus"
+  # features = "platypus"
+  # features = "weeping-willow"
+  # features = "mirthful-willow"
+
+  # Configure this with the `toggle-ss` alias:
+  # side-by-side = true
+[include]
+  path = /Users/greg/scripts/themes.gitconfig
+# └──────────────────────────────────────────────────────────────────────────────────────┘
+
 [user]
     name = Greg Tatum
     email = tatum.creative@gmail.com
 [core]
   excludesfile = ~/scripts/.gitignore_global
   editor = vim
-  pager = diff-so-fancy
+  # pager = diff-so-fancy
   fsmonitor = true
   untrackedcache = true
 [push]
@@ -12,8 +61,24 @@
 [alias]
   files = show --name-only
   stat = show --stat
-  pop = reset --keep HEAD^
-  pops = reset --soft HEAD^
+  pop = "!f() { \
+    fmt='%C(always,yellow)%h %C(always,red)%ad %C(always,magenta)%an%C(always,green)%d %C(always,reset)%s'; \
+    printf 'popped: '; \
+    git log -1 --color=always --pretty=format:\"$fmt\" --date=short; \
+    git reset --keep HEAD^ || exit $?; \
+    printf 'now at:  '; \
+    git log -1 --color=always --pretty=format:\"$fmt\" --date=short; \
+    printf '\n'; \
+  }; f"
+  pops = "!f() { \
+    fmt='%C(always,yellow)%h %C(always,red)%ad %C(always,magenta)%an%C(always,green)%d %C(always,reset)%s'; \
+    printf 'popped: '; \
+    git log -1 --color=always --pretty=format:\"$fmt\" --date=short; \
+    git reset --soft HEAD^ || exit $?; \
+    printf 'now at: '; \
+    git log -1 --color=always --pretty=format:\"$fmt\" --date=short; \
+    printf '\n'; \
+  }; f"
   detach = switch --detach
   wip = log --graph --pretty=oneline --abbrev-commit
   br = !git --no-pager branch --sort='committerdate' --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
@@ -37,7 +102,7 @@
   changedate = "!d=\"$(gdate -d \"$1\")\" && shift && GIT_COMMITTER_DATE=\"$d\" \
     git commit --amend --no-edit --date \"$d\""
   up = "!f() { git checkout main && git pull --ff-only && git checkout -; }; f"
-  reup = "!f() { git checkout main && git pull --ff-only && git checkout - && git rebase main; }; f"
+  reup = "!f() { git fetch origin main:main && git rebase main; }; f"
   now = !"git commit --amend --date=\"$(date)\" --no-edit"
   find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
   show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git show $merge'"

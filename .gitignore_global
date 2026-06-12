@@ -14,7 +14,12 @@ venv
 .venv
 .kotlin
 AGENTS.md
+.coverage
+
+profile.json.gz
 
 # Temporary
 toolkit/components/translations/bergamot-translator/thirdparty/
 /Users/greg/dev/OpusTrainer/data
+.agent
+.claude
