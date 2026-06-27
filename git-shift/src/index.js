@@ -2,6 +2,7 @@
 // @ts-check
 
 import { parseArgs } from "node:util";
+import { pathToFileURL } from "node:url";
 import { color } from "./ansi.js";
 import { applyShiftPlan, parseTwoDotRange, readCommits } from "./git.js";
 import { printShiftPlan } from "./list.js";
@@ -19,8 +20,12 @@ function usage() {
   ].join("\n");
 }
 
-async function main() {
-  const { values, positionals } = parseArgs({
+/**
+ * @param {string[]} args
+ */
+export function parseGitShiftArgs(args) {
+  return parseArgs({
+    args: normalizeArgs(args),
     allowPositionals: true,
     options: {
       when: { type: "string" },
@@ -29,6 +34,36 @@ async function main() {
       help: { type: "boolean", short: "h", default: false },
     },
   });
+}
+
+/**
+ * Node's parseArgs treats a value like "-2h" after "--by" as a possible
+ * option, so normalize the specific signed-duration form that this CLI accepts.
+ *
+ * @param {string[]} args
+ * @returns {string[]}
+ */
+function normalizeArgs(args) {
+  const normalized = [];
+
+  for (let index = 0; index < args.length; index++) {
+    const arg = args[index];
+    const nextArg = args[index + 1];
+
+    if (arg === "--by" && typeof nextArg === "string" && /^-[1-9]\d*[hm]$/i.test(nextArg)) {
+      normalized.push(`--by=${nextArg}`);
+      index++;
+      continue;
+    }
+
+    normalized.push(arg);
+  }
+
+  return normalized;
+}
+
+async function main() {
+  const { values, positionals } = parseGitShiftArgs(process.argv.slice(2));
 
   if (values.help) {
     console.log(usage());
@@ -82,7 +117,9 @@ function printRewriteSuccess(backupRef) {
   console.log(`  git reset --hard ${backupRef}`);
 }
 
-main().catch(error => {
-  console.error(color.red(error instanceof Error ? error.message : String(error)));
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch(error => {
+    console.error(color.red(error instanceof Error ? error.message : String(error)));
+    process.exit(1);
+  });
+}

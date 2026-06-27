@@ -3,7 +3,6 @@ node_modules
 npm-debug.log*
 gecko-dev
 _notes
-package-lock.json
 webpack.local-config.js
 yarn-error.log
 .vscode
